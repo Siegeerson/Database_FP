@@ -9,7 +9,8 @@ public class SimplePred extends Pred {
 		compVal = v;
 		colNum = cn;
 	}
-
+//	Assumes that simple predicates will performed first
+//	TODO: ensure that either this assumption is not invalidated or change to use map
 	public boolean eval(int[] row) {
 		int val1 = row[colNum];
 		switch (pred) {

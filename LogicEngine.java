@@ -11,30 +11,31 @@ import java.util.Arrays;
 
 public class LogicEngine {
 	static int TABLESMADE = 0;
+
 	/**
 	 * @param table
-	 * @param pred - head of tree
+	 * @param pred  - head of tree
 	 * @return - result of simple predicates
 	 * @throws IOException
 	 */
-	public Table simplePred(Table table,Pred pred) throws IOException {
-		String outputName = table.fileName+"_"+TABLESMADE;
+	public Table simplePred(Table table, Pred pred) throws IOException {
+		String outputName = table.fileName + "_" + TABLESMADE;
 		TABLESMADE++;
 		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputName)));
 		File targetF = new File(table.fileName);
 		FileInputStream fis = new FileInputStream(targetF);
 		FileChannel fc = fis.getChannel();
-		ByteBuffer bb = ByteBuffer.allocate(4*1024);
+		ByteBuffer bb = ByteBuffer.allocate(4 * 1024);
 		ByteBuffer bb2 = ByteBuffer.allocate(4 * 1024);
 		int hit = 0;
-		while(fc.read(bb)!=-1) {
+		while (fc.read(bb) != -1) {
 			bb.flip();
-			while(bb.remaining()>=table.colNums*4) {
+			while (bb.remaining() >= table.colNums * 4) {
 				int[] row = new int[table.colNums];
 				for (int j = 0; j < row.length; j++) {
 					row[j] = bb.getInt();
 				}
-				if(pred.eval(row)) {
+				if (pred.eval(row)) {
 					hit++;
 					System.out.println(Arrays.toString(row));
 					for (int j = 0; j < row.length; j++) {
@@ -51,10 +52,9 @@ public class LogicEngine {
 		fc.close();
 		fis.close();
 		dos.close();
-		return new Table(outputName, table.colNums);
+		Table output = new Table(outputName, table.colNums);
+		output.colNames = table.colNames; //since no changes are made to col structure just reuse old map
+		return output;
 	}
-	
-	
-
 
 }
