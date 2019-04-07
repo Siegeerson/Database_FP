@@ -28,7 +28,7 @@ public class Loader {
 	
 	public Table LoadFile(String path) throws IOException {
 		File input = new File(path);
-		String outputName = input.getName().substring(0, 1);
+		String outputName = input.getParent()+"_"+input.getName().substring(0,1);
 		FileReader fr = new FileReader(input);
 		CharBuffer cb1 = CharBuffer.allocate(4 * 1024);
 		CharBuffer cb2 = CharBuffer.allocate(4 * 1024);

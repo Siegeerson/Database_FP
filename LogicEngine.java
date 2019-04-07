@@ -54,6 +54,7 @@ public class LogicEngine {
 		return new Table(outputName, table.colNums);
 	}
 	
+	
 
 
 }
