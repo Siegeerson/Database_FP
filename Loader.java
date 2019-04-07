@@ -80,7 +80,7 @@ public class Loader {
 		int i = 0;
 		while (fc.read(bb) != -1) {
 			bb.flip();
-			while (bb.hasRemaining()) {
+			while (bb.remaining()>3) {
 				System.out.print(bb.getInt() + ", ");
 				i++;
 				if (i % table.colNums == 0) {
@@ -92,6 +92,7 @@ public class Loader {
 			ByteBuffer tempB = bb;
 			bb = bb2;
 			bb2 = tempB;
+			System.out.println(i/table.colNums);
 		}
 		fc.close();
 		fis.close();

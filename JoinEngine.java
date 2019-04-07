@@ -37,7 +37,7 @@ public class JoinEngine {
 		while(fc.read(bb)!=-1) {
 			bb.flip();
 			List<int[]> bufferedRows = new ArrayList<>(); //make a list of all arrays put in the buffer
-			while(bb.remaining()>4*t1.colNums) {
+			while(bb.remaining()>(4*t1.colNums)-1) {
 				int[] tempAr = new int[t1.colNums];
 				for (int i = 0; i < tempAr.length; i++) {
 					tempAr[i]=bb.getInt();
@@ -47,7 +47,7 @@ public class JoinEngine {
 			while(fc2.read(b2b)!=-1) {
 //				System.out.println("START INNER");
 				b2b.flip();
-				while(b2b.remaining()>4*t2.colNums) {
+				while(b2b.remaining()>(4*t2.colNums)-1) {
 					int[] tempAr = new int[t2.colNums];
 					for (int i = 0; i < tempAr.length; i++) {
 						tempAr[i]=b2b.getInt();

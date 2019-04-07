@@ -11,6 +11,10 @@ import java.util.Arrays;
 
 public class LogicEngine {
 	static int TABLESMADE = 0;
+	
+	
+	
+	
 
 	/**
 	 * @param table
