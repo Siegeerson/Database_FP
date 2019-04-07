@@ -23,15 +23,21 @@ class LogicEngineTest {
 		LogicEngine testLE = new LogicEngine();
 		Table temp = null;
 		try {
-			temp = testL.LoadFile("data/m/A.csv");
+			temp = testL.LoadFile("data/m/B.csv");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Table tempP = null;
 		try {
-			SimplePred sim = new SimplePred("=", 0, 0);
-			tempP = testLE.simplePred(temp,sim);
+			SimplePred sim = new SimplePred(">", 0, 4);
+			SimplePred sim2 = new SimplePred("<", 0, 10);
+			SimplePred sim3 = new SimplePred(">",0,20);
+			SimplePred sim4 = new SimplePred("<", 0, 26);
+			AndPred and1 = new AndPred(sim, sim2);
+			AndPred and2 = new AndPred(sim4, sim3);
+			OrPred or1 = new OrPred(and1,and2);
+			tempP = testLE.simplePred(temp,or1);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

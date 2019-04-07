@@ -10,9 +10,16 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 
 public class LogicEngine {
-
+	static int TABLESMADE = 0;
+	/**
+	 * @param table
+	 * @param pred - head of tree
+	 * @return - result of simple predicates
+	 * @throws IOException
+	 */
 	public Table simplePred(Table table,Pred pred) throws IOException {
-		String outputName = table.fileName+System.currentTimeMillis();
+		String outputName = table.fileName+"_"+TABLESMADE;
+		TABLESMADE++;
 		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputName)));
 		File targetF = new File(table.fileName);
 		FileInputStream fis = new FileInputStream(targetF);
