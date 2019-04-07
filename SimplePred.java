@@ -1,5 +1,5 @@
 
-public class SimplePred {
+public class SimplePred extends Pred {
 	String pred;
 	int colNum;
 	int compVal;
@@ -22,4 +22,5 @@ public class SimplePred {
 		}
 		return false;
 	}
+
 }

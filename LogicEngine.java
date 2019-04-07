@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class LogicEngine {
 
-	public Table simplePred(Table table,SimplePred[] preds) throws IOException {
+	public Table simplePred(Table table,Pred pred) throws IOException {
 		String outputName = table.fileName+System.currentTimeMillis();
 		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputName)));
 		File targetF = new File(table.fileName);
@@ -27,7 +27,7 @@ public class LogicEngine {
 				for (int j = 0; j < row.length; j++) {
 					row[j] = bb.getInt();
 				}
-				if(evalOrPreds(preds, row)) {
+				if(pred.eval(row)) {
 					hit++;
 					System.out.println(Arrays.toString(row));
 					for (int j = 0; j < row.length; j++) {
@@ -47,13 +47,6 @@ public class LogicEngine {
 		return new Table(outputName, table.colNums);
 	}
 	
-//	TODO:change to evaluate OR's and AND's the same like the calculator tree
-	public boolean evalOrPreds(SimplePred[] preds,int[] row) {
-		for (SimplePred sp : preds) {
-			if(sp.eval(row)) return true;
-		}
-		return false;
-	}
-	
+
 
 }
