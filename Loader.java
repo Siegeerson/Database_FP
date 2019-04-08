@@ -29,11 +29,10 @@ public class Loader {
 	public Table LoadFile(String path) throws IOException {
 		File input = new File(path);
 		String tableName =  input.getName().substring(0, 1);
-		String outputName = input.getParent().charAt(5) + "_" + tableName;
 		FileReader fr = new FileReader(input);
 		CharBuffer cb1 = CharBuffer.allocate(4 * 1024);
 		CharBuffer cb2 = CharBuffer.allocate(4 * 1024);
-		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputName)));
+		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(tableName)));
 		int colNum = 0;
 		boolean colNumF = false;
 		while (fr.read(cb1) != -1) {
@@ -64,7 +63,7 @@ public class Loader {
 		}
 		dos.close();
 		fr.close();
-		Table output = new Table(outputName, colNum);
+		Table output = new Table(tableName, colNum);
 		for (int i = 0; i < output.colNums; i++) {
 			output.colNames.put(tableName+i, i);
 		}
@@ -81,7 +80,7 @@ public class Loader {
 		while (fc.read(bb) != -1) {
 			bb.flip();
 			while (bb.remaining()>3) {
-				System.out.print(bb.getInt() + ", ");
+				System.out.printf("%-10d",bb.get());
 				i++;
 				if (i % table.colNums == 0) {
 					System.out.println();

@@ -11,8 +11,7 @@ import java.util.Arrays;
 
 public class LogicEngine {
 	static int TABLESMADE = 0;
-	
-	
+//	TODO:put logicE + joinE in one execution engine?
 	
 	
 
