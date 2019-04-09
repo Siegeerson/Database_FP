@@ -26,15 +26,15 @@ class LoaderTest {
 		Loader test = new Loader();
 		Table temp = null;
 		try {
-			temp = test.LoadFile("data/m/C.csv");
+			temp = test.LoadFile("data/s/A.csv");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-//		try {
-//			test.testRead(temp);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			test.testRead(temp);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Test

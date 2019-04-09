@@ -1,18 +1,17 @@
+import java.util.Map;
 
 public class SimplePred extends Pred {
 	String pred;
-	int colNum;
+	String colNum;
 	int compVal;
 
-	public SimplePred(String p, int cn, int v) {
+	public SimplePred(String p, String cn, int v) {
 		pred = p;
 		compVal = v;
 		colNum = cn;
 	}
-//	Assumes that simple predicates will performed first
-//	TODO: ensure that either this assumption is not invalidated or change to use map
-	public boolean eval(int[] row) {
-		int val1 = row[colNum];
+	public boolean eval(int[] row, Map<String,Integer> rowN) {
+		int val1 = row[rowN.get(colNum)];
 		switch (pred) {
 		case ">":
 			return val1 > compVal;

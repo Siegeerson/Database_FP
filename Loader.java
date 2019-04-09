@@ -80,10 +80,10 @@ public class Loader {
 		while (fc.read(bb) != -1) {
 			bb.flip();
 			while (bb.remaining()>3) {
-				System.out.printf("%-10d",bb.get());
+//				System.out.printf("%-10d",bb.get());
 				i++;
 				if (i % table.colNums == 0) {
-					System.out.println();
+//					System.out.println();
 				}
 			}
 			bb2.clear();

@@ -38,9 +38,9 @@ public class LogicEngine {
 				for (int j = 0; j < row.length; j++) {
 					row[j] = bb.getInt();
 				}
-				if (pred.eval(row)) {
+				if (pred.eval(row,table.colNames)) {
 					hit++;
-					System.out.println(Arrays.toString(row));
+//					System.out.println(Arrays.toString(row));
 					for (int j = 0; j < row.length; j++) {
 						dos.writeInt(row[j]);
 					}

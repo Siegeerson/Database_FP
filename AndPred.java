@@ -1,3 +1,4 @@
+import java.util.Map;
 
 public class AndPred extends Pred {
 	Pred and1;
@@ -8,8 +9,8 @@ public class AndPred extends Pred {
 		this.and2 = and2;
 	}
 	@Override
-	public boolean eval(int[] row) {
-		return (and1.eval(row)&&and2.eval(row));
+	public boolean eval(int[] row,Map<String,Integer> rowN) {
+		return (and1.eval(row,rowN)&&and2.eval(row,rowN));
 	}
 
 }
