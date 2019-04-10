@@ -26,6 +26,7 @@ public class JoinEngine {
 		FileInputStream fis2 = new FileInputStream(targetF2);
 		FileChannel fc2 = fis2.getChannel();
 //		Allocate two buffers for each table
+		System.out.println(t2.colNames.keySet() +"_"+tar1);
 		int colTarg1 = t1.colNames.get(tar1);
 		int colTarg2 = t2.colNames.get(tar2);
 		

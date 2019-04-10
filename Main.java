@@ -1,7 +1,12 @@
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
 
 /**
  * @author Benjamin Siege This Class will be the main method that accepts input
@@ -27,21 +32,42 @@ public class Main {
 		return output;
 	}
 
+	/**
+	 * @param loadedT
+	 * @param tables
+	 * @param pred
+	 * @param input   Takes in a place to put tables to be joined and their
+	 *                predicates
+	 */
 	public static void putTablesJoins(Map<String, Table> loadedT, Deque<Table> tables, Deque<String> pred,
 			String input) {
 		String nString = input.substring(6);
 		String[] joins = nString.split(" AND ");
 		String colN1;
 		String colN2;
+		Set<String> pushedT = new HashSet<>();
 		for (String joinOp : joins) {
 			colN1 = joinOp.substring(0, 1);
+			boolean unordered = false;
+			if (pushedT.add(colN1)) {
+				tables.add(loadedT.get(colN1));
+			}
 			colN2 = joinOp.substring(7, 8);
-			tables.add(loadedT.get(colN1));
-			tables.add(loadedT.get(colN2));
-			pred.add(colN1 + joinOp.charAt(3));
-			pred.add(colN2 + joinOp.charAt(10));
+			if (pushedT.add(colN2)) {
+				tables.add(loadedT.get(colN2));
+			}else {
+				unordered = true;//weird ordering edge case
+			}
+			if (unordered) {
+				pred.add(colN2 + joinOp.charAt(10));
+				pred.add(colN1 + joinOp.charAt(3));
+			} else {
+				pred.add(colN1 + joinOp.charAt(3));
+				pred.add(colN2 + joinOp.charAt(10));
+			}
 
 		}
+		System.out.println(pred.size() + "_" + tables.size());
 
 	}
 
@@ -63,11 +89,13 @@ public class Main {
 	public static Table doPredicates(String simpPreds, Table toFilter) {
 		LogicEngine le = new LogicEngine();
 		String[] eq = simpPreds.replace(";", "").split("AND");
-		if (eq.length == 1) {
-			String predicate = eq[0].trim();
-			String operation = predicate.substring(5, 6);
+		System.out.println(Arrays.toString(eq));
+		if (eq.length == 2 &&eq[0].equals("")) {
+//			TODO:Change getting of info to account for shorter or longer column numbers
+			String predicate = eq[1].trim();
+			String operation = predicate.substring(6,7);
 			String colN = predicate.substring(0, 1) + predicate.substring(3, 4);
-			int value = Integer.parseInt(predicate.substring(7));
+			int value = Integer.parseInt(predicate.substring(7).trim());
 			try {
 				return le.simplePred(toFilter, new SimplePred(operation, colN, value));
 			} catch (IOException e) {
@@ -77,6 +105,37 @@ public class Main {
 
 //		TODO:deal with multiple preds
 		return null;
+	}
+
+	/**
+	 * @param input
+	 * @param query -> test query
+	 */
+	public static Table executeQuery(String input, String query) {
+		Map<String, Table> lTables = loadTables(input);
+		Scanner scan = new Scanner(query);
+		String[] sums = getSums(scan.nextLine());
+		scan.nextLine();
+		Deque<Table> table = new ArrayDeque<Table>();
+		Deque<String> preds = new ArrayDeque<String>();
+		putTablesJoins(lTables, table, preds, scan.nextLine());
+		Table joinRe = doJoins(table, preds);
+		Table simPreds = doPredicates(scan.nextLine(), joinRe);
+		return simPreds;
+
+	}
+
+	public static Table doJoins(Deque<Table> tables, Deque<String> preds) {
+		JoinEngine je = new JoinEngine();
+		while (!preds.isEmpty()) {
+			try {
+				System.out.println(tables.size());
+				tables.push(je.blnJoin(tables.pop(), tables.pop(), preds.pop(), preds.pop()));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return tables.pop();
 	}
 
 }
