@@ -26,10 +26,10 @@ public class JoinEngine {
 		FileInputStream fis2 = new FileInputStream(targetF2);
 		FileChannel fc2 = fis2.getChannel();
 //		Allocate two buffers for each table
-		System.out.println(t2.colNames.keySet() +"_"+tar1);
+		System.out.println(t1.fileName+"_"+t1.colNums+"_"+t2.fileName+"_"+t2.colNums);
 		int colTarg1 = t1.colNames.get(tar1);
 		int colTarg2 = t2.colNames.get(tar2);
-		
+		int hit = 0;
 		ByteBuffer bb = ByteBuffer.allocate(4*1024);//TODO:get help on size allocation
 		ByteBuffer bb2 = ByteBuffer.allocate(4*1024);
 		ByteBuffer b2b = ByteBuffer.allocate(4*1024);//TODO:get help on size allocation
@@ -56,6 +56,7 @@ public class JoinEngine {
 					for (int[] iA: bufferedRows) {
 						if(iA[colTarg1]==tempAr[colTarg2]) {
 //							System.out.println("START WRITE");
+							hit++;
 //							Write both rows			
 							for (int i : iA) {
 								dos.writeInt(i);
@@ -92,11 +93,11 @@ public class JoinEngine {
 		fc.close();
 		fis.close();
 		dos.close();
-		return makeConTable(outputName, t1, t2);
+		return makeConTable(outputName, t1, t2,hit);
 	}
 	
-	public Table makeConTable(String outputName,Table t1,Table t2) {
-		Table newT = new Table(outputName, t1.colNums+t2.colNums);
+	public Table makeConTable(String outputName,Table t1,Table t2,int hit) {
+		Table newT = new Table(outputName, t1.colNums+t2.colNums,hit);
 		int i = 0;
 //		puts correct col nums in hash 
 		for (String k : t1.colNames.keySet()) {

@@ -12,8 +12,6 @@ import java.util.Arrays;
 public class LogicEngine {
 	static int TABLESMADE = 0;
 //	TODO:put logicE + joinE in one execution engine?
-	
-	
 
 	/**
 	 * @param table
@@ -30,7 +28,7 @@ public class LogicEngine {
 		FileChannel fc = fis.getChannel();
 		ByteBuffer bb = ByteBuffer.allocate(4 * 1024);
 		ByteBuffer bb2 = ByteBuffer.allocate(4 * 1024);
-		int hit = 0;
+		int hit = 0;// records when it finds a valid result
 		while (fc.read(bb) != -1) {
 			bb.flip();
 			while (bb.remaining() >= table.colNums * 4) {
@@ -38,7 +36,7 @@ public class LogicEngine {
 				for (int j = 0; j < row.length; j++) {
 					row[j] = bb.getInt();
 				}
-				if (pred.eval(row,table.colNames)) {
+				if (pred.eval(row, table.colNames)) {
 					hit++;
 //					System.out.println(Arrays.toString(row));
 					for (int j = 0; j < row.length; j++) {
@@ -55,9 +53,36 @@ public class LogicEngine {
 		fc.close();
 		fis.close();
 		dos.close();
-		Table output = new Table(outputName, table.colNums);
-		output.colNames = table.colNames; //since no changes are made to col structure just reuse old map
+		Table output = new Table(outputName, table.colNums, hit);
+		output.colNames = table.colNames; // since no changes are made to col structure just reuse old map
 		return output;
 	}
 
+//	TODO:Write summation method
+	public void outputSums(Table t, String[] sums) throws IOException {
+		FileInputStream fis = new FileInputStream(new File(t.fileName));
+		FileChannel fc = fis.getChannel();
+		ByteBuffer bb = ByteBuffer.allocate(4 * 1024);
+		ByteBuffer bb2 = ByteBuffer.allocate(4 * 1024);
+		int[] sumsA = new int[sums.length];
+		while (fc.read(bb) != -1) {
+			bb.flip();
+			while (bb.remaining() >= t.colNums * 4) {
+				int[] row = new int[t.colNums];
+				for (int j = 0; j < row.length; j++) {
+					row[j] = bb.getInt();
+				}
+				for (int i = 0; i < sumsA.length; i++) {
+					sumsA[i]+=row[t.colNames.get(sums[i])];
+				}
+			}
+			bb2.clear();
+			bb2.put(bb);
+			ByteBuffer tempB = bb;
+			bb = bb2;
+			bb2 = tempB;
+		}
+		System.out.println(Arrays.toString(sumsA));
+		fis.close();
+	}
 }

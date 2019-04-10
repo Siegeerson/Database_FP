@@ -28,12 +28,14 @@ public class Loader {
 //	TODO:Gather more metaData
 	public Table LoadFile(String path) throws IOException {
 		File input = new File(path);
-		String tableName =  input.getName().substring(0, 1);
+		String tableName =  getName(path);
 		FileReader fr = new FileReader(input);
 		CharBuffer cb1 = CharBuffer.allocate(4 * 1024);
 		CharBuffer cb2 = CharBuffer.allocate(4 * 1024);
 		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(tableName)));
 		int colNum = 0;
+		int rowNum = 0;
+		int colTrack =0;
 		boolean colNumF = false;
 		while (fr.read(cb1) != -1) {
 			cb1.flip();
@@ -45,10 +47,12 @@ public class Loader {
 					dos.writeInt((Integer.parseInt(cb1.subSequence(numS, i).toString(), 10))); // TODO:Best Way?
 					numS = i + 1;
 //					Find number of columns
-					if (!colNumF) {
-						colNum++;
-						if (selChar == '\n') {
+					colTrack++;
+					if (selChar == '\n') {
+						rowNum++;
+						if (!colNumF) {
 							colNumF = true;
+							colNum=colTrack;
 						}
 					}
 				}
@@ -63,9 +67,9 @@ public class Loader {
 		}
 		dos.close();
 		fr.close();
-		Table output = new Table(tableName, colNum);
+		Table output = new Table(tableName, colNum,rowNum);
 		for (int i = 0; i < output.colNums; i++) {
-			output.colNames.put(tableName+i, i);
+			output.colNames.put(output.name+i, i);
 		}
 		return output;
 	}
@@ -95,5 +99,11 @@ public class Loader {
 		}
 		fc.close();
 		fis.close();
+	}
+	public String getName(String f) {
+		String[] fullP = f.split("/");
+		String name = fullP[2].charAt(0)+fullP[1];
+		return name;
+		
 	}
 }
