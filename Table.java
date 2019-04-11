@@ -3,8 +3,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Table {
-	String fileName;
 	String name;
+	String fName;
 	int colNums;
 	int rowNum;
 //	int[] colMax;
@@ -14,8 +14,8 @@ public class Table {
 //	TODO:add metaData gathering
 	public Table(String nameF, int colN,int rowN) {
 		colNums = colN;
-		fileName = nameF;
 		name = nameF.substring(0,1);
+		fName = "NOT STORED ON DISK";
 		rowNum = rowN;
 		colNames = new LinkedHashMap<String, Integer>(colN*2);
 		//inital size is set this way to reduce hash resizing
@@ -24,6 +24,6 @@ public class Table {
 	
 	@Override
 	public String toString() {
-		return fileName +", "+colNums+", "+rowNum;
+		return name +", "+colNums+", "+rowNum;
 	}
 }

@@ -5,10 +5,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.rmi.UnexpectedException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 
-public class TableIterator implements Iterator<Integer[][]> {
+public class TableIterator implements Iterator<ArrayList<int[]>> {
 
 	FileInputStream fis;
 	ByteBuffer bb;
@@ -18,7 +19,7 @@ public class TableIterator implements Iterator<Integer[][]> {
 	int rowsRead;
 	public TableIterator(Table t) throws IOException {
 		table =t;
-		fis = new FileInputStream(new File(table.fileName));
+		fis = new FileInputStream(new File(table.fName));
 		fc = fis.getChannel();
 		rowsRead =0;
 		bb = ByteBuffer.allocate(4*1024);
@@ -38,14 +39,16 @@ public class TableIterator implements Iterator<Integer[][]> {
 	 *returns a matrix of new values
 	 */
 	@Override
-	public Integer[][] next() {
+	public ArrayList<int[]> next() {
 		if ((bb.remaining()>(4*table.colNums)-1)||resetBuffers()!=-1) {
-			Integer[][] intAr = new Integer[bb.remaining()/(8*table.colNums)][table.colNums];
-			System.out.println(bb.remaining()+"_"+(4*table.colNums));
-			for (int i = 0; i < intAr.length; i++) {
-				for (int j = 0; j < intAr[0].length; j++) {
-					intAr[i][j]=bb.getInt();
+			ArrayList<int[]> intAr = new ArrayList<>();//TODO:pick initial capacity,either method or constant
+//			System.out.println(bb.remaining()+"_"+(4*table.colNums));
+			while(bb.remaining()/4>(4*table.colNums)-1) {
+				int[] tempAr=  new int[table.colNums];
+				for (int j = 0; j < table.colNums; j++) {
+					tempAr[j] = bb.getInt();
 				}
+				intAr.add(tempAr);
 			}
 			return intAr;
 		}

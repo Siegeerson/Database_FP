@@ -1,6 +1,7 @@
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -13,10 +14,10 @@ class TloaderTest {
 		Loader l = new Loader();
 		Table t = l.LoadFile("data/xs/a.csv");
 		Tloader tlTest = new Tloader(t);
-		Iterator<Integer[][]> rowIter = tlTest.iterator();
-		Integer[][] intA = rowIter.next();
-		Integer[][] intA2 = tlTest.iterator().next();
-		System.out.println(Arrays.toString(intA[0])+"\n"+Arrays.toString(intA2[0]));
+		Iterator<ArrayList<int[]>> rowIter = tlTest.iterator();
+		ArrayList<int[]> intA = rowIter.next();
+		ArrayList<int[]> intA2 = tlTest.iterator().next();
+		System.out.println(Arrays.toString(intA.get(0))+"\n"+Arrays.toString(intA2.get(0)));
 		
 	}
 

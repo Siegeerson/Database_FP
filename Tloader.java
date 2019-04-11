@@ -1,8 +1,9 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Tloader implements Iterable<Integer[][]> {
+public class Tloader implements IterableWithTable {
 
 	Table t;
 	TableIterator it;// need to maintain a reference to current iterator so it can be closed
@@ -16,7 +17,7 @@ public class Tloader implements Iterable<Integer[][]> {
 	 * iterator for buffered rows
 	 */
 	@Override
-	public Iterator<Integer[][]> iterator() {
+	public Iterator<ArrayList<int[]>> iterator() {
 		if (it!=null) {
 			try {
 				it.close();
@@ -32,6 +33,11 @@ public class Tloader implements Iterable<Integer[][]> {
 			e.printStackTrace();
 		}
 		return it;
+	}
+
+	@Override
+	public Table getTable() {
+		return t;
 	}
 
 }

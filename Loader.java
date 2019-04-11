@@ -18,7 +18,7 @@ public class Loader {
 		String[] toLoad = input.split(",");
 		for (String inS : toLoad) {
 			Table inST = LoadFile(inS);
-			result.put(inST.fileName, inST);
+			result.put(inST.name, inST);
 		}
 
 		return result;
@@ -68,6 +68,7 @@ public class Loader {
 		dos.close();
 		fr.close();
 		Table output = new Table(tableName, colNum,rowNum);
+		output.fName = tableName;
 		for (int i = 0; i < output.colNums; i++) {
 			output.colNames.put(output.name+i, i);
 		}
@@ -75,7 +76,7 @@ public class Loader {
 	}
 
 	public void testRead(Table table) throws IOException {
-		File targetF = new File(table.fileName);
+		File targetF = new File(table.fName);
 		FileInputStream fis = new FileInputStream(targetF);
 		FileChannel fc = fis.getChannel();
 		ByteBuffer bb = ByteBuffer.allocate(4 * 1024);
