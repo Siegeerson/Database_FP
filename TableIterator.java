@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.channels.FileChannel.MapMode;
 import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,20 +13,19 @@ public class TableIterator implements Iterator<ArrayList<int[]>> {
 
 	FileInputStream fis;
 	ByteBuffer bb;
-	ByteBuffer bb2;
 	FileChannel fc;
 	Table table;
 	int rowsRead;
 
 	public TableIterator(Table t) throws IOException {
 		table = t;
-		fis = new FileInputStream(new File(table.fName));
+		File tempF = new File(table.fName);
+		fis = new FileInputStream(tempF);
 		fc = fis.getChannel();
 		rowsRead = 0;
-		bb = ByteBuffer.allocate(4 * 1024);
-		bb2 = ByteBuffer.allocate(4 * 1024);
-		fc.read(bb);
-		bb.flip();//DON'T FORGET THIS
+		bb = fc.map(MapMode.READ_ONLY, 0, tempF.length());
+//		fc.read(bb);
+//		bb.flip();//DON'T FORGET THIS
 	}
 
 	/**
@@ -42,17 +42,20 @@ public class TableIterator implements Iterator<ArrayList<int[]>> {
 	 */
 	@Override
 	public ArrayList<int[]> next() {
-		if ((bb.remaining() > (4 * table.colNums) - 1) || resetBuffers() != -1) {
+		if (bb.hasRemaining()) {
 			ArrayList<int[]> intAr = new ArrayList<>();// TODO:pick initial capacity,either method or constant
 //			System.out.println(bb.remaining()+"_"+(4*table.colNums));
-			while (bb.remaining() > (4 * table.colNums) - 1) {
-				int[] tempAr = new int[table.colNums];
-				for (int j = 0; j < table.colNums; j++) {
-					tempAr[j] = bb.getInt();
+			for (int i = 0; i < (2 * 1024) / table.colNums; i++) {
+				if (bb.hasRemaining()) {
+					int[] tempAr = new int[table.colNums];
+					for (int j = 0; j < table.colNums; j++) {
+						tempAr[j] = bb.getInt();
+					}
+					rowsRead++;
+					intAr.add(tempAr);
+				}else {
+					break;//bad practice i know
 				}
-				rowsRead++;
-				intAr.add(tempAr);
-				
 			}
 			return intAr;
 		}
@@ -73,21 +76,21 @@ public class TableIterator implements Iterator<ArrayList<int[]>> {
 		fis.close();
 	}
 
-	private int resetBuffers() {
-		bb2.clear();
-		bb2.put(bb);
-		ByteBuffer tempB = bb;
-		bb = bb2;
-		bb2 = tempB;
-		try {
-			int a = fc.read(bb);
-			bb.flip();// TODO:Best place for this?
-			return a;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return -1;
-
-	}
+//	private int resetBuffers() {
+//		bb2.clear();
+//		bb2.put(bb);
+//		ByteBuffer tempB = bb;
+//		bb = bb2;
+//		bb2 = tempB;
+//		try {
+//			int a = fc.read(bb);
+//			bb.flip();// TODO:Best place for this?
+//			return a;
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return -1;
+//
+//	}
 
 }

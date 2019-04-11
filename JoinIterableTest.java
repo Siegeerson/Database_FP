@@ -27,10 +27,10 @@ class JoinIterableTest {
 	@Test
 	void test() throws IOException {
 		Loader a = new Loader();
-		String predL = "A3";
-		String predR = "D0";
-		Table lT = a.LoadFile("data/m/A.csv");
-		Table rT = a.LoadFile("data/m/D.csv");
+		String predR = "A3";
+		String predL = "D0";
+		Table rT = a.LoadFile("data/m/A.csv");
+		Table lT = a.LoadFile("data/m/D.csv");
 		System.out.println(lT.toString()+rT.toString());
 		System.out.println("LOADS DONE_"+(System.nanoTime()-start));
 		start = System.nanoTime();
