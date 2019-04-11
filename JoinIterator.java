@@ -30,7 +30,7 @@ public class JoinIterator implements Iterator<ArrayList<int[]>> {
 	@Override
 	public boolean hasNext() {
 		if(leftItor.hasNext()==false) {
-			System.out.println(leftItor.toString()+"__FINISHED");
+			System.out.println(toString()+"__FINISHED");
 		}
 		return leftItor.hasNext();
 	}
@@ -65,6 +65,10 @@ public class JoinIterator implements Iterator<ArrayList<int[]>> {
 		}
 		return result;
 
+	}
+	@Override
+	public String toString() {
+		return leftItor.toString()+"^"+rightItor.toString();
 	}
 
 }

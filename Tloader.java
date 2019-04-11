@@ -40,9 +40,6 @@ public class Tloader implements IterableWithTable {
 	public Table getTable() {
 		return t;
 	}
-	@Override
-	public String toString() {
-		return t.toString();
-	}
+
 
 }

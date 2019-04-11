@@ -21,11 +21,11 @@ class MainTest {
 	@Test
 	void test() {
 		String q =
-				"SELECT SUM(B.c0), SUM(B.c1), SUM(D.c2), SUM(D.c3)\r\n" + 
-				"FROM A, B, C, D\r\n" + 
-				"WHERE A.c1 = B.c0 AND A.c3 = D.c0 AND C.c2 = D.c2\r\n" + 
-				"AND B.c2 = -1257;";
-		String load = "data/xs/A.csv,data/xs/B.csv,data/xs/C.csv,data/xs/D.csv";
+				"SELECT SUM(A.c0), SUM(E.c4), SUM(C.c1), SUM(C.c2)\r\n" + 
+				"FROM A, C, D, E\r\n" + 
+				"WHERE C.c1 = E.c0 AND C.c2 = D.c2 AND A.c3 = D.c0\r\n" + 
+				"AND D.c2 < 13445983;";
+		String load = "data/s/C.csv,data/s/D.csv,data/s/E.csv,data/s/A.csv";
 		int[] result = Main.executeQuery(load,q);
 		System.out.println(Arrays.toString(result));
 	}

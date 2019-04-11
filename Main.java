@@ -10,6 +10,22 @@ import java.util.Set;
 
 public class Main {
 
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String, Table> loaded = loadTables(scan.nextLine());
+		int nums = scan.nextInt();
+		for (int i = 0; i < nums; i++) {
+			int[] res = executeQuery(loaded, scan);
+			for (int j = 0; j < res.length; j++) {
+				System.out.print(res[j]+",");
+			}
+			System.out.println();
+			scan.nextLine();
+		}
+		
+		
+		
+	}
 	/**
 	 * load in tables
 	 * 
@@ -32,12 +48,13 @@ public class Main {
 		return output;
 	}
 
-	public static void putTablesJoins(Map<String, Table> loadedT, Deque<Table> tables, Deque<String> pred,
+	public static void putTablesJoins(Map<String, Table> loadedT, ArrayDeque<Table> tables, ArrayDeque<String> pred,
 			String input) {
 		String nString = input.substring(6);
 		String[] joins = nString.split(" AND ");
 		String colN1;
 		String colN2;
+		int maxSize =0;
 		Set<String> pushedT = new HashSet<>();
 		for (String joinOp : joins) {
 			String[] ops = joinOp.split(" = ");
@@ -61,10 +78,14 @@ public class Main {
 			}
 
 		}
+
 //		System.out.println(pred.size() + "_" + tables.size());
 
 	}
-
+	public static void bigToSmall() {
+		
+		
+	}
 	public static Pred doPredicates(String simpPreds) {
 		String[] eq = simpPreds.substring(4).replace(";", "").split("AND");
 //		System.out.println(Arrays.toString(eq));
@@ -98,29 +119,33 @@ public class Main {
 		}
 		return sumVals;
 	}
-	
+
 	/**
 	 * @param tables
 	 * @param preds
 	 * 
-	 * Basic l-Deep tree constructor, no use of metaData
+	 *               Basic l-Deep tree constructor, no use of metaData
 	 * @return
 	 */
-	public static IterableWithTable constructJoinIterable(Deque<Table> tables,Deque<String> preds) {
+	public static IterableWithTable constructJoinIterable(Deque<Table> tables, Deque<String> preds) {
 		IterableWithTable topIterable = new Tloader(tables.pop());
-		while(!tables.isEmpty()) {
+		while (!tables.isEmpty()) {
 //			Construct left deep tree
-			topIterable = new JoinIterable(topIterable,new Tloader(tables.pop()),preds.pop(),preds.pop());
+			topIterable = new JoinIterable(topIterable, new Tloader(tables.pop()), preds.pop(), preds.pop());
 		}
 		return topIterable;
 	}
+
 	public static int[] executeQuery(String input, String query) {
 		Map<String, Table> lTables = loadTables(input);
-		Scanner scan = new Scanner(query);
+		return executeQuery(lTables, new Scanner(query));
+	}
+	
+	public static int[] executeQuery(Map<String, Table> lTables,Scanner scan) {
 		String[] sums = getSums(scan.nextLine());
 		scan.nextLine();
-		Deque<Table> table = new ArrayDeque<Table>();
-		Deque<String> preds = new ArrayDeque<String>();
+		ArrayDeque<Table> table = new ArrayDeque<Table>();
+		ArrayDeque<String> preds = new ArrayDeque<String>();
 		putTablesJoins(lTables, table, preds, scan.nextLine());
 		IterableWithTable topJoin = constructJoinIterable(table, preds);
 		Pred predicateTree = doPredicates(scan.nextLine());
@@ -128,8 +153,9 @@ public class Main {
 		Sum result = new Sum(predIter, sums);
 		System.out.println("START");
 		long start = System.nanoTime();
-		int[] res =  result.doSum();
-		System.out.println(System.nanoTime()-start);
+		int[] res = result.doSum();
+		System.out.println(System.nanoTime() - start);
+		scan.close();
 		return res;
 	}
 

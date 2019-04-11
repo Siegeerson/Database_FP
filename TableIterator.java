@@ -74,6 +74,10 @@ public class TableIterator implements Iterator<ArrayList<int[]>> {
 		fc.close();
 		fis.close();
 	}
+	@Override
+	public String toString() {
+		return table.toString();
+	}
 
 //	private int resetBuffers() {
 //		bb2.clear();
