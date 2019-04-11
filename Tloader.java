@@ -20,7 +20,7 @@ public class Tloader implements IterableWithTable {
 	public Iterator<ArrayList<int[]>> iterator() {
 		if (it != null) {
 			try {
-				System.out.println("NEW READ__"+t.toString());
+//				System.out.println("NEW READ__"+t.toString());
 				it.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -39,6 +39,10 @@ public class Tloader implements IterableWithTable {
 	@Override
 	public Table getTable() {
 		return t;
+	}
+	@Override
+	public String toString() {
+		return t.toString();
 	}
 
 }

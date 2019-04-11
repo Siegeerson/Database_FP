@@ -9,6 +9,8 @@ public class JoinIterator implements Iterator<ArrayList<int[]>> {
 	Iterator<ArrayList<int[]>> leftItor;
 	Iterator<ArrayList<int[]>> rightItor;
 	ArrayList<int[]> currentLeft;
+	Table tl;
+	Table tr;
 	int lCond;
 	int rCond;
 	int colN;
@@ -21,19 +23,26 @@ public class JoinIterator implements Iterator<ArrayList<int[]>> {
 		leftItor = leftIt.iterator();
 		rightItor = rightIt.iterator();
 		colN = t1.colNums + t2.colNums;
+		tl = t1;
+		tr = t2;
 	}
 
 	@Override
 	public boolean hasNext() {
+		if(leftItor.hasNext()==false) {
+			System.out.println(leftItor.toString()+"__FINISHED");
+		}
 		return leftItor.hasNext();
 	}
 
 	/**
-	 *Preforms BLN join for one block from the right branch for each next call
+	 * Preforms BLN join for one block from the right branch for each next call
 	 */
 	@Override
 	public ArrayList<int[]> next() {
 		ArrayList<int[]> result = new ArrayList<>();
+//		System.out.println(tl.toString() + "__" + tr.toString());
+
 		if (currentLeft == null) {
 			currentLeft = leftItor.next();
 		}

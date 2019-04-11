@@ -41,9 +41,14 @@ public class JoinIterable implements IterableWithTable {
 
 	@Override
 	public Table getTable() {
+//		System.out.println(t1.toString()+"__"+t2.toString());
 
 		return makeConTable(t1.name + t2.name, t1.rowNum * t2.rowNum);// TODO:currently max rows possible, change to be
 																		// better metaData later
+	}
+	@Override
+	public String toString() {
+		return leftIter.toString()+"^"+rightIter.toString();
 	}
 
 }

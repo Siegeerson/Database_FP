@@ -24,9 +24,10 @@ public class Loader {
 		return result;
 	}
 
-//	TODO:Change to external sort on each different column
+//	TODO:Change to external sort on each different column (?)
 //	TODO:Gather more metaData
 //	TODO:This method might be able to be improved
+//	TODO:use mappedByteBuffer
 	public Table LoadFile(String path) throws IOException {
 		File input = new File(path);
 		String tableName =  getName(path);
