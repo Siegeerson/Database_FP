@@ -15,15 +15,10 @@ import java.util.Set;
  */
 public class Main {
 
-//	TODO:Use a stack for joins, push all tables in with thier corresponding join conditions in different table
 
 	public static void main(String[] args) {
-		try {
-			Thread.sleep(30000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Scanner s = new Scanner(System.in);
+		s.nextLine();
 		String q =
 				"SELECT SUM(D.c2), SUM(A.c29), SUM(C.c1)\r\n" + 
 				"FROM A, B, C, D\r\n" + 
@@ -93,7 +88,6 @@ public class Main {
 	 * @param input: the first line of each sql query
 	 * @return
 	 */
-//	TODO:fix sum gathering
 	public static String[] getSums(String input) {
 		String a = input.substring(6);
 		String[] sums = a.split(",");

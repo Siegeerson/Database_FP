@@ -27,14 +27,11 @@ class LoaderTest {
 		Table temp = null;
 		try {
 			temp = test.LoadFile("data/s/A.csv");
+			System.out.println(temp.rowNum);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		try {
-			test.testRead(temp);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
 	}
 
 	@Test

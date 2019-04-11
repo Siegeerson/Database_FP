@@ -15,7 +15,7 @@ import java.util.Set;
 import org.omg.CORBA.LongLongSeqHelper;
 
 public class JoinEngine {
-//	TODO:How to designate names for each row
+
 	public Table blnJoin(Table t1, Table t2, String tar1, String tar2) throws IOException {
 		String outputName = t1.fileName + t2.fileName;
 		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputName)));
@@ -36,6 +36,7 @@ public class JoinEngine {
 		ByteBuffer b2b2 = ByteBuffer.allocate(4*1024);
 //		System.out.println("START LOOPING");
 		while(fc.read(bb)!=-1) {
+			
 			bb.flip();
 			List<int[]> bufferedRows = new ArrayList<>(); //make a list of all arrays put in the buffer
 			while(bb.remaining()>(4*t1.colNums)-1) {

@@ -11,7 +11,6 @@ import java.util.Arrays;
 
 public class LogicEngine {
 	static int TABLESMADE = 0;
-//	TODO:put logicE + joinE in one execution engine?
 
 	/**
 	 * @param table
@@ -58,8 +57,7 @@ public class LogicEngine {
 		return output;
 	}
 
-//	TODO:Write summation method
-	public void outputSums(Table t, String[] sums) throws IOException {
+		public void outputSums(Table t, String[] sums) throws IOException {
 		FileInputStream fis = new FileInputStream(new File(t.fileName));
 		FileChannel fc = fis.getChannel();
 		ByteBuffer bb = ByteBuffer.allocate(4 * 1024);
