@@ -18,7 +18,7 @@ public class Tloader implements IterableWithTable {
 	 */
 	@Override
 	public Iterator<ArrayList<int[]>> iterator() {
-		if (it!=null) {
+		if (it != null) {
 			try {
 				it.close();
 			} catch (IOException e) {
@@ -26,7 +26,7 @@ public class Tloader implements IterableWithTable {
 			}
 		}
 		try {
-			it = new TableIterator(t);//Lots of exceptions here
+			it = new TableIterator(t);// Lots of exceptions here
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

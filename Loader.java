@@ -26,6 +26,7 @@ public class Loader {
 
 //	TODO:Change to external sort on each different column
 //	TODO:Gather more metaData
+//	TODO:This method might be able to be improved
 	public Table LoadFile(String path) throws IOException {
 		File input = new File(path);
 		String tableName =  getName(path);
