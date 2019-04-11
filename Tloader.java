@@ -1,7 +1,5 @@
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Iterator;
 
 public class Tloader implements Iterable<Integer[][]> {

@@ -40,7 +40,8 @@ public class TableIterator implements Iterator<Integer[][]> {
 	@Override
 	public Integer[][] next() {
 		if ((bb.remaining()>(4*table.colNums)-1)||resetBuffers()!=-1) {
-			Integer[][] intAr = new Integer[bb.remaining()/(4*table.colNums)][table.colNums];
+			Integer[][] intAr = new Integer[bb.remaining()/(8*table.colNums)][table.colNums];
+			System.out.println(bb.remaining()+"_"+(4*table.colNums));
 			for (int i = 0; i < intAr.length; i++) {
 				for (int j = 0; j < intAr[0].length; j++) {
 					intAr[i][j]=bb.getInt();
@@ -70,7 +71,9 @@ public class TableIterator implements Iterator<Integer[][]> {
 		bb = bb2;
 		bb2 = tempB;
 		try {
-			return fc.read(bb);
+			int a =fc.read(bb);
+			bb.flip();//TODO:Best place for this?
+			return a;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
