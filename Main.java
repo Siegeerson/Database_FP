@@ -17,15 +17,14 @@ public class Main {
 		for (int i = 0; i < nums; i++) {
 			int[] res = executeQuery(loaded, scan);
 			for (int j = 0; j < res.length; j++) {
-				System.out.print(res[j]+",");
+				System.out.print(res[j] + ",");
 			}
 			System.out.println();
 			scan.nextLine();
 		}
-		
-		
-		
+
 	}
+
 	/**
 	 * load in tables
 	 * 
@@ -48,13 +47,13 @@ public class Main {
 		return output;
 	}
 
-	public static void putTablesJoins(Map<String, IterableWithTable> loadedT, ArrayDeque<IterableWithTable> tables, ArrayDeque<String> pred,
-			String input) {
+	public static void putTablesJoins(Map<String, IterableWithTable> loadedT, ArrayDeque<IterableWithTable> tables,
+			ArrayDeque<String> pred, String input) {
 		String nString = input.substring(6);
 		String[] joins = nString.split(" AND ");
 		String colN1;
 		String colN2;
-		int maxSize =0;
+		int maxSize = 0;
 		Set<String> pushedT = new HashSet<>();
 		for (String joinOp : joins) {
 			String[] ops = joinOp.split(" = ");
@@ -82,10 +81,11 @@ public class Main {
 //		System.out.println(pred.size() + "_" + tables.size());
 
 	}
+
 	public static void bigToSmall() {
-		
-		
+
 	}
+
 	public static void doPredicates(String simpPreds, Map<String, IterableWithTable> baseTables) {
 		String[] eq = simpPreds.substring(4).replace(";", "").split("AND");
 //		System.out.println(Arrays.toString(eq));
@@ -96,7 +96,7 @@ public class Main {
 		for (String pred : eq) {
 			scan = new Scanner(pred);
 			cn = scan.next();
-			String tn = cn.substring(0,1);
+			String tn = cn.substring(0, 1);
 			cn = tn + cn.substring(3);
 			p = scan.next();
 			val = scan.nextInt();
@@ -138,27 +138,28 @@ public class Main {
 		Map<String, Table> lTables = loadTables(input);
 		return executeQuery(lTables, new Scanner(query));
 	}
+
 	/**
 	 * @param inputs
-	 * @return
-	 * Makes a map from a table name to the "input stream"
-	 * this map can then be modified by pushing it down and replacing it with a predicate iterator
+	 * @return Makes a map from a table name to the "input stream" this map can then
+	 *         be modified by pushing it down and replacing it with a predicate
+	 *         iterator
 	 */
-	public static Map<String,IterableWithTable> putInIterators(Map<String, Table> inputs){
+	public static Map<String, IterableWithTable> putInIterators(Map<String, Table> inputs) {
 		Map<String, IterableWithTable> a = new HashMap<String, IterableWithTable>();
 		for (String name : inputs.keySet()) {
 			a.put(name, new Tloader(inputs.get(name)));
 		}
 		return a;
 	}
-	
+
 	/**
 	 * @param lTables
 	 * @param scan
-	 * @return
-	 * Goes from load -> simple predicates (>,<,=) which are fast to joins to sums
+	 * @return Goes from load -> simple predicates (>,<,=) which are fast to joins
+	 *         to sums
 	 */
-	public static int[] executeQuery(Map<String, Table> lTables,Scanner scan) {
+	public static int[] executeQuery(Map<String, Table> lTables, Scanner scan) {
 		Map<String, IterableWithTable> loads = putInIterators(lTables);
 		String[] sums = getSums(scan.nextLine());
 		scan.nextLine();
@@ -166,9 +167,9 @@ public class Main {
 		ArrayDeque<String> preds = new ArrayDeque<String>();
 		String joins = scan.nextLine();
 		String predicates = scan.nextLine();
-		
-		doPredicates(predicates,loads);//change by reference
-		putTablesJoins(loads, table, preds,joins);
+
+		doPredicates(predicates, loads);// change by reference
+		putTablesJoins(loads, table, preds, joins);
 		IterableWithTable topJoin = constructJoinIterable(table, preds);
 //		IterableWithTable predIter = new PredicateIterable(topJoin, predicateTree); no longer needed
 		Sum result = new Sum(topJoin, sums);
