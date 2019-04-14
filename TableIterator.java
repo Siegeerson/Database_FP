@@ -33,6 +33,7 @@ public class TableIterator implements Iterator<ArrayList<int[]>> {
 	 */
 	@Override
 	public boolean hasNext() {
+		System.out.println((table.rowNum-rowsRead)/(double)table.rowNum+"_"+table.name);
 		return rowsRead != table.rowNum;
 	}
 
@@ -44,7 +45,8 @@ public class TableIterator implements Iterator<ArrayList<int[]>> {
 		if (bb.hasRemaining()) {
 			ArrayList<int[]> intAr = new ArrayList<>();// TODO:pick initial capacity,either method or constant
 //			System.out.println(bb.remaining()+"_"+(4*table.colNums));
-			for (int i = 0; i < (4 * 1024) / table.colNums; i++) {
+			for (int i = 0; i < ((1024*40)/table.colNums); i++) {
+				if (i==1024*4);
 				if (bb.hasRemaining()) {
 					int[] tempAr = new int[table.colNums];
 					for (int j = 0; j < table.colNums; j++) {
