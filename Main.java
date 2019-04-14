@@ -166,6 +166,7 @@ public class Main {
 		ArrayDeque<String> preds = new ArrayDeque<String>();
 		String joins = scan.nextLine();
 		String predicates = scan.nextLine();
+		
 		doPredicates(predicates,loads);//change by reference
 		putTablesJoins(loads, table, preds,joins);
 		IterableWithTable topJoin = constructJoinIterable(table, preds);

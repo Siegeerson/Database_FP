@@ -3,6 +3,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.rmi.UnexpectedException;
@@ -12,7 +13,7 @@ import java.util.Iterator;
 public class TableIterator implements Iterator<ArrayList<int[]>> {
 
 	FileInputStream fis;
-	ByteBuffer bb;
+	MappedByteBuffer bb;
 	FileChannel fc;
 	Table table;
 	int rowsRead;
@@ -24,6 +25,8 @@ public class TableIterator implements Iterator<ArrayList<int[]>> {
 		fc = fis.getChannel();
 		rowsRead = 0;
 		bb = fc.map(MapMode.READ_ONLY, 0, tempF.length());
+		bb.load();
+		
 //		fc.read(bb);
 //		bb.flip();//DON'T FORGET THIS
 	}
@@ -42,6 +45,7 @@ public class TableIterator implements Iterator<ArrayList<int[]>> {
 	@Override
 	public ArrayList<int[]> next() {
 		if (bb.hasRemaining()) {
+			bb.load();
 			ArrayList<int[]> intAr = new ArrayList<>();// TODO:pick initial capacity,either method or constant
 //			System.out.println(bb.remaining()+"_"+(4*table.colNums));
 			for (int i = 0; i < (4 * 1024) / table.colNums; i++) {
