@@ -48,7 +48,7 @@ public class Main {
 		return output;
 	}
 
-	public static void putTablesJoins(Map<String, Table> loadedT, ArrayDeque<Table> tables, ArrayDeque<String> pred,
+	public static void putTablesJoins(Map<String, IterableWithTable> loadedT, ArrayDeque<IterableWithTable> tables, ArrayDeque<String> pred,
 			String input) {
 		String nString = input.substring(6);
 		String[] joins = nString.split(" AND ");
@@ -86,10 +86,9 @@ public class Main {
 		
 		
 	}
-	public static Pred doPredicates(String simpPreds) {
+	public static void doPredicates(String simpPreds, Map<String, IterableWithTable> baseTables) {
 		String[] eq = simpPreds.substring(4).replace(";", "").split("AND");
 //		System.out.println(Arrays.toString(eq));
-		Deque<Pred> preds = new ArrayDeque<>();
 		String p;
 		String cn;
 		int val;
@@ -97,16 +96,15 @@ public class Main {
 		for (String pred : eq) {
 			scan = new Scanner(pred);
 			cn = scan.next();
-			cn = cn.substring(0, 1) + cn.substring(3);
+			String tn = cn.substring(0,1);
+			cn = tn + cn.substring(3);
 			p = scan.next();
 			val = scan.nextInt();
-			preds.add(new SimplePred(p, cn, val));
+			PredicateIterable tempPredI = new PredicateIterable(baseTables.get(tn), new SimplePred(p, cn, val));
+			baseTables.put(tn, tempPredI);
 			scan.close();
 		}
-		while (preds.size() > 1) {
-			preds.add(new AndPred(preds.pop(), preds.pop()));
-		}
-		return preds.pop();
+
 	}
 
 	public static String[] getSums(String input) {
@@ -127,11 +125,11 @@ public class Main {
 	 *               Basic l-Deep tree constructor, no use of metaData
 	 * @return
 	 */
-	public static IterableWithTable constructJoinIterable(Deque<Table> tables, Deque<String> preds) {
-		IterableWithTable topIterable = new Tloader(tables.pop());
+	public static IterableWithTable constructJoinIterable(Deque<IterableWithTable> tables, Deque<String> preds) {
+		IterableWithTable topIterable = tables.pop();
 		while (!tables.isEmpty()) {
 //			Construct left deep tree
-			topIterable = new JoinIterable(topIterable, new Tloader(tables.pop()), preds.pop(), preds.pop());
+			topIterable = new JoinIterable(topIterable, tables.pop(), preds.pop(), preds.pop());
 		}
 		return topIterable;
 	}
@@ -140,17 +138,39 @@ public class Main {
 		Map<String, Table> lTables = loadTables(input);
 		return executeQuery(lTables, new Scanner(query));
 	}
+	/**
+	 * @param inputs
+	 * @return
+	 * Makes a map from a table name to the "input stream"
+	 * this map can then be modified by pushing it down and replacing it with a predicate iterator
+	 */
+	public static Map<String,IterableWithTable> putInIterators(Map<String, Table> inputs){
+		Map<String, IterableWithTable> a = new HashMap<String, IterableWithTable>();
+		for (String name : inputs.keySet()) {
+			a.put(name, new Tloader(inputs.get(name)));
+		}
+		return a;
+	}
 	
+	/**
+	 * @param lTables
+	 * @param scan
+	 * @return
+	 * Goes from load -> simple predicates (>,<,=) which are fast to joins to sums
+	 */
 	public static int[] executeQuery(Map<String, Table> lTables,Scanner scan) {
+		Map<String, IterableWithTable> loads = putInIterators(lTables);
 		String[] sums = getSums(scan.nextLine());
 		scan.nextLine();
-		ArrayDeque<Table> table = new ArrayDeque<Table>();
+		ArrayDeque<IterableWithTable> table = new ArrayDeque<IterableWithTable>();
 		ArrayDeque<String> preds = new ArrayDeque<String>();
-		putTablesJoins(lTables, table, preds, scan.nextLine());
+		String joins = scan.nextLine();
+		String predicates = scan.nextLine();
+		doPredicates(predicates,loads);//change by reference
+		putTablesJoins(loads, table, preds,joins);
 		IterableWithTable topJoin = constructJoinIterable(table, preds);
-		Pred predicateTree = doPredicates(scan.nextLine());
-		IterableWithTable predIter = new PredicateIterable(topJoin, predicateTree);
-		Sum result = new Sum(predIter, sums);
+//		IterableWithTable predIter = new PredicateIterable(topJoin, predicateTree); no longer needed
+		Sum result = new Sum(topJoin, sums);
 		System.out.println("START");
 		long start = System.nanoTime();
 		int[] res = result.doSum();
