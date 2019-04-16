@@ -26,8 +26,6 @@ public class Loader {
 
 //	TODO:Change to external sort on each different column (?)
 //	TODO:Gather more metaData
-//	TODO:This method might be able to be improved
-//	TODO:use mappedByteBuffer
 	public Table LoadFile(String path) throws IOException {
 		File input = new File(path);
 		String tableName =  getName(path);
@@ -46,7 +44,7 @@ public class Loader {
 				char selChar = cb1.charAt(i);
 				if (selChar == ',' || selChar == '\n') {
 //					Integer tempI= Integer.parseInt(cb1.subSequence(numS, i).toString(),10);
-					dos.writeInt((Integer.parseInt(cb1.subSequence(numS, i).toString(), 10))); // TODO:Best Way?
+					dos.writeInt((Integer.parseInt(cb1.subSequence(numS, i).toString(), 10)));
 					numS = i + 1;
 //					Find number of columns
 					colTrack++;

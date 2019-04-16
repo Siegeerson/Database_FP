@@ -12,16 +12,16 @@ public class Main {
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
 		Map<String, Table> loaded = loadTables(scan.nextLine());
-		int nums = scan.nextInt();
+		int nums = Integer.parseInt(scan.nextLine());
 		for (int i = 0; i < nums; i++) {
 			int[] res = executeQuery(loaded, scan);
 			for (int j = 0; j < res.length; j++) {
 				System.out.print(res[j]+",");
 			}
 			System.out.println();
-			scan.nextLine();
+			if(i<nums-1) scan.nextLine();
 		}
-		
+		scan.close();
 		
 		
 	}
@@ -81,10 +81,7 @@ public class Main {
 //		System.out.println(pred.size() + "_" + tables.size());
 
 	}
-	public static void bigToSmall() {
-		
-		
-	}
+
 	public static Pred doPredicates(String simpPreds) {
 		String[] eq = simpPreds.substring(4).replace(";", "").split("AND");
 //		System.out.println(Arrays.toString(eq));
@@ -122,8 +119,8 @@ public class Main {
 	/**
 	 * @param tables
 	 * @param preds
-	 * 
 	 *               Basic l-Deep tree constructor, no use of metaData
+	 *               TODO:add in query optimization, actualy put effort into construction
 	 * @return
 	 */
 	public static IterableWithTable constructJoinIterable(Deque<Table> tables, Deque<String> preds) {
@@ -141,20 +138,19 @@ public class Main {
 	}
 	
 	public static int[] executeQuery(Map<String, Table> lTables,Scanner scan) {
-		String[] sums = getSums(scan.nextLine());
+		String[] sums = getSums(scan.nextLine());//compute what is to be summed
 		scan.nextLine();
 		ArrayDeque<Table> table = new ArrayDeque<Table>();
 		ArrayDeque<String> preds = new ArrayDeque<String>();
-		putTablesJoins(lTables, table, preds, scan.nextLine());
-		IterableWithTable topJoin = constructJoinIterable(table, preds);
+		putTablesJoins(lTables, table, preds, scan.nextLine());//create stacks of tables and predicates
+		IterableWithTable topJoin = constructJoinIterable(table, preds);//use stacks to create left deep tree 
 		Pred predicateTree = doPredicates(scan.nextLine());
-		IterableWithTable predIter = new PredicateIterable(topJoin, predicateTree);
-		Sum result = new Sum(predIter, sums);
+		IterableWithTable predIter = new PredicateIterable(topJoin, predicateTree);//put simple predicates on top of join tree
+		Sum result = new Sum(predIter, sums);//summation on top
 		System.out.println("START");
 		long start = System.nanoTime();
-		int[] res = result.doSum();
+		int[] res = result.doSum();//do summation
 		System.out.println(System.nanoTime() - start);
-		scan.close();
 		return res;
 	}
 
