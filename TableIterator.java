@@ -33,7 +33,7 @@ public class TableIterator implements Iterator<ArrayList<int[]>> {
 	 */
 	@Override
 	public boolean hasNext() {
-		System.err.println((table.rowNum-rowsRead)/(double)table.rowNum+"_"+table.name);
+//		System.err.println((table.rowNum-rowsRead)/(double)table.rowNum+"_"+table.name);
 		return rowsRead != table.rowNum;
 	}
 

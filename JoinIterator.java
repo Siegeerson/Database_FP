@@ -62,8 +62,12 @@ public class JoinIterator implements Iterator<ArrayList<int[]>> {
 	public ArrayList<int[]> doJoin(ArrayList<int[]> result){
 		ArrayList<int[]> rightRow = rightItor.next();
 //		System.out.println(rightRow.size());
-		for (int[] left : currentLeft) {
-			for (int[] right : rightRow) {
+		Iterator<int[]> leftIt = currentLeft.iterator();
+		while(leftIt.hasNext()) {
+			int[] left = leftIt.next();
+			Iterator<int[]> rightIt = rightRow.iterator();
+			while(rightIt.hasNext()) {
+				int[] right = rightIt.next();
 				if (left[lCond] == right[rCond]) {
 					int[] tempAr = Arrays.copyOf(left, left.length + right.length);// check if this is efficient
 					System.arraycopy(right, 0, tempAr, left.length, right.length);
