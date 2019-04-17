@@ -26,6 +26,8 @@ public class JoinIterable implements IterableWithTable {
 
 	public Table makeConTable(String outputName, int hit) {
 		Table newT = new Table(outputName, t1.colNums + t2.colNums, hit);
+		newT.names.addAll(t1.names);
+		newT.names.addAll(t2.names);
 		int i = 0;
 //		puts correct col nums in hash 
 		for (String k : t1.colNames.keySet()) {
@@ -43,7 +45,7 @@ public class JoinIterable implements IterableWithTable {
 	public Table getTable() {
 //		System.out.println(t1.toString()+"__"+t2.toString());
 
-		return makeConTable(t1.name + t2.name, t1.rowNum * t2.rowNum);// TODO:currently max rows possible, change to be
+		return makeConTable(t1.name, t1.rowNum * t2.rowNum);// TODO:currently max rows possible, change to be
 																		// better metaData later
 	}
 	@Override

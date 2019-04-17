@@ -69,6 +69,7 @@ public class Loader {
 		fr.close();
 		Table output = new Table(tableName, colNum,rowNum);
 		output.fName = tableName;
+		output.names.add(tableName.substring(0,1));
 		for (int i = 0; i < output.colNums; i++) {
 			output.colNames.put(output.name+i, i);
 		}

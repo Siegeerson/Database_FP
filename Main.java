@@ -1,12 +1,19 @@
 import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.Set;
+
+import javafx.scene.control.Tab;
+import sun.misc.Queue;
 
 public class Main {
 	public static void main(String[] args) {
@@ -16,15 +23,16 @@ public class Main {
 		for (int i = 0; i < nums; i++) {
 			int[] res = executeQuery(loaded, scan);
 			for (int j = 0; j < res.length; j++) {
-				System.out.print(res[j]+",");
+				System.out.print(res[j] + ",");
 			}
 			System.out.println();
-			if(i<nums-1) scan.nextLine();
+			if (i < nums - 1)
+				scan.nextLine();
 		}
 		scan.close();
-		
-		
+
 	}
+
 	/**
 	 * load in tables
 	 * 
@@ -47,38 +55,60 @@ public class Main {
 		return output;
 	}
 
-	public static void putTablesJoins(Map<String, Table> loadedT, ArrayDeque<Table> tables, ArrayDeque<String> pred,
-			String input) {
+//	public static void putTablesJoins(Map<String, Table> loadedT, ArrayDeque<Table> tables, ArrayDeque<String> pred,
+//			String input) {
+//		String nString = input.substring(6);
+//		String[] joins = nString.split(" AND ");
+//		String colN1;
+//		String colN2;
+//		int maxSize =0;
+//		Set<String> pushedT = new HashSet<>();
+//		for (String joinOp : joins) {
+//			String[] ops = joinOp.split(" = ");
+//			colN1 = ops[0].substring(0, 1);
+//			boolean unordered = false;
+//			if (pushedT.add(colN1)) {
+//				tables.add(loadedT.get(colN1));
+//			}
+//			colN2 = ops[1].substring(0, 1);
+//			if (pushedT.add(colN2)) {
+//				tables.add(loadedT.get(colN2));
+//			} else {
+//				unordered = true;// weird ordering edge case
+//			}
+//			if (unordered) {
+//				pred.add(colN2 + ops[1].trim().substring(3));
+//				pred.add(colN1 + ops[0].trim().substring(3));
+//			} else {
+//				pred.add(colN1 + ops[0].trim().substring(3));
+//				pred.add(colN2 + ops[1].trim().substring(3));
+//			}
+//
+//		}
+//
+////		System.out.println(pred.size() + "_" + tables.size());
+//
+//	}
+	/**
+	 * @param joinable
+	 * @param joinConds
+	 * @param loaded
+	 * @param input     Construct by reference abstractions needed to optimize join
+	 *                  orderings
+	 */
+	public static void processJoins(Map<String, String> joinConds, Map<String, Table> loaded, String input) {
 		String nString = input.substring(6);
 		String[] joins = nString.split(" AND ");
 		String colN1;
 		String colN2;
-		int maxSize =0;
-		Set<String> pushedT = new HashSet<>();
 		for (String joinOp : joins) {
 			String[] ops = joinOp.split(" = ");
 			colN1 = ops[0].substring(0, 1);
-			boolean unordered = false;
-			if (pushedT.add(colN1)) {
-				tables.add(loadedT.get(colN1));
-			}
 			colN2 = ops[1].substring(0, 1);
-			if (pushedT.add(colN2)) {
-				tables.add(loadedT.get(colN2));
-			} else {
-				unordered = true;// weird ordering edge case
-			}
-			if (unordered) {
-				pred.add(colN2 + ops[1].trim().substring(3));
-				pred.add(colN1 + ops[0].trim().substring(3));
-			} else {
-				pred.add(colN1 + ops[0].trim().substring(3));
-				pred.add(colN2 + ops[1].trim().substring(3));
-			}
-
+//			put join conditions both ways
+			joinConds.put(colN1 + colN2, colN1 + ops[0].trim().substring(3));
+			joinConds.put(colN2 + colN1, colN2 + ops[1].trim().substring(3));
 		}
-
-//		System.out.println(pred.size() + "_" + tables.size());
 
 	}
 
@@ -117,39 +147,97 @@ public class Main {
 	}
 
 	/**
-	 * @param tables
-	 * @param preds
-	 *               Basic l-Deep tree constructor, no use of metaData
-	 *               TODO:add in query optimization, actualy put effort into construction
-	 * @return
+	 * @param canJoin
+	 * @param joinConds
+	 * @return Recursive method to construct join tree First shot at optimizing
+	 *         assumes a correlation between num of rows and unique values this way
+	 *         joins start big * small and then go where possible also put biggest
+	 *         at bottom to ensure smallest amount of repeated reads this will
+	 *         change once if/when i impliment merge joins
 	 */
-	public static IterableWithTable constructJoinIterable(Deque<Table> tables, Deque<String> preds) {
-		IterableWithTable topIterable = new Tloader(tables.pop());
-		while (!tables.isEmpty()) {
-//			Construct left deep tree
-			topIterable = new JoinIterable(topIterable, new Tloader(tables.pop()), preds.pop(), preds.pop());
+	public static IterableWithTable constructJoinTable(PriorityQueue<Table> jTables, Map<String, String> joinConds) {
+		Table maxT = null;
+		int maxRs = 0;
+		for (Table t : jTables) {
+//			find biggest table to use as first leaf
+			if (t.rowNum > maxRs) {
+				maxRs = t.rowNum;
+				maxT = t;
+			}
 		}
-		return topIterable;
+		jTables.remove(maxT);
+		return constJoinIterable(jTables, joinConds,(IterableWithTable) new Tloader(maxT));
+	}
+
+	/**
+	 * @param canJoin
+	 * @param joinConds
+	 * @param baseT
+	 * @return
+	 * uses abstractions to do next join in tree based on the given table
+	 */
+	public static IterableWithTable constJoinIterable(PriorityQueue<Table> jTables,Map<String, String> joinConds,IterableWithTable baseT) {
+		if(jTables.isEmpty()) return baseT;//recursive end
+		List<String> lNList = baseT.getTable().names;
+		List<Table> notJoinable = new ArrayList<Table>();
+		boolean joinP = false;
+//		find a possible join
+		Table rT =null;
+		String jName ="";//the "table" that the right table is joining to
+		while(!joinP) {
+			rT = jTables.poll();
+			Iterator<String> it = lNList.iterator();
+			while(it.hasNext()&&!joinP) {
+				jName =it.next();
+				String predName = rT.name+jName;
+				if(joinConds.get(predName)!=null) {
+					joinP = true;
+					
+				}
+			}
+			if(!joinP) notJoinable.add(rT); 
+		}
+		jTables.addAll(notJoinable);//might be inefficient
+		String cond1 = joinConds.get(jName+rT.name);
+		String cond2 = joinConds.get(rT.name+jName);
+		IterableWithTable newIt= new JoinIterable(baseT, new Tloader(rT), cond1, cond2);
+		return constJoinIterable(jTables, joinConds, newIt);
+		
 	}
 
 	public static int[] executeQuery(String input, String query) {
 		Map<String, Table> lTables = loadTables(input);
 		return executeQuery(lTables, new Scanner(query));
 	}
-	
-	public static int[] executeQuery(Map<String, Table> lTables,Scanner scan) {
-		String[] sums = getSums(scan.nextLine());//compute what is to be summed
-		scan.nextLine();
-		ArrayDeque<Table> table = new ArrayDeque<Table>();
-		ArrayDeque<String> preds = new ArrayDeque<String>();
-		putTablesJoins(lTables, table, preds, scan.nextLine());//create stacks of tables and predicates
-		IterableWithTable topJoin = constructJoinIterable(table, preds);//use stacks to create left deep tree 
+
+	/**
+	 * @param canJoin
+	 * @param loaded  puts loaded tables into the can join map
+	 */
+	public static PriorityQueue<Table> fillQ(Map<String, Table> loaded,String input) {
+		PriorityQueue<Table> pq = new PriorityQueue<>();
+		String tStr = input.substring(4);
+		String[] tables = tStr.split(",");
+		for (String string : tables) {
+			pq.add(loaded.get(string.trim()));
+		}
+		return pq;
+	}
+
+	public static int[] executeQuery(Map<String, Table> lTables, Scanner scan) {
+		String[] sums = getSums(scan.nextLine());// compute what is to be summed
+		PriorityQueue<Table> pqT = fillQ(lTables,scan.nextLine());
+//		canJoin = fillCanJoin(canJoin, lTables);
+		Map<String, String> joinConds = new HashMap<String, String>();
+		processJoins(joinConds, lTables, scan.nextLine());
+		IterableWithTable topJoin = constructJoinTable(pqT, joinConds);
 		Pred predicateTree = doPredicates(scan.nextLine());
-		IterableWithTable predIter = new PredicateIterable(topJoin, predicateTree);//put simple predicates on top of join tree
-		Sum result = new Sum(predIter, sums);//summation on top
-		System.out.println("START");
+		IterableWithTable predIter = new PredicateIterable(topJoin, predicateTree);// put simple predicates on top of
+																					// join tree
+		Sum result = new Sum(predIter, sums);// summation on top
+		System.err.println("START");
 		long start = System.nanoTime();
-		int[] res = result.doSum();//do summation
+		int[] res = result.doSum();// do summation
 		System.out.println(System.nanoTime() - start);
 		return res;
 	}
