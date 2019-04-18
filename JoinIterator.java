@@ -77,18 +77,20 @@ public class JoinIterator implements Iterator<int[][]> {
 			if (lCurr == currentLeft.length) {
 				if (!rightItor.hasNext()) {
 					if (leftItor.hasNext()) {
-						System.err.println("RESET: " + rightItor.toString());
+//						System.err.println("RESET: " + rightItor.toString());
 						rightItor = rightIt.iterator();
 						currentLeft = leftItor.next();
 						lCurr = 0;
-					} else
+					} else {
+						System.out.println((currentLeft.length-lCurr)+"_"+(currentRight.length-rCurr));
 						return result;
+					}
 				}
 				currentRight = rightItor.next();
 				rCurr = 0;
 			}
 
-			if (lCurr == currentLeft.length&&currentRight.length-1==rCurr) {
+			if (lCurr == currentLeft.length) {
 				lCurr = 0;
 			}
 			while (lCurr < currentLeft.length && resIndex < result.length) {
@@ -125,11 +127,11 @@ public class JoinIterator implements Iterator<int[][]> {
 					}
 					rCurr++;
 				}
-				if(rCurr==currentRight.length) System.out.println("STOP");
 				lCurr++;
 			}
 
 		}
+//		System.out.println((currentLeft.length-lCurr)+"_"+(currentRight.length-rCurr));
 
 		return result;
 

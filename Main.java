@@ -18,8 +18,8 @@ import sun.misc.Queue;
 public class Main {
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
-		long startT = System.currentTimeMillis();
 		Map<String, Table> loaded = loadTables("data/s/A.csv,data/s/B.csv,data/s/C.csv,data/s/D.csv,data/s/E.csv,data/s/F.csv");//scan.nextLine());
+		long startT = System.currentTimeMillis();
 		int nums = 1;//Integer.parseInt(scan.nextLine());
 		for (int i = 0; i < nums; i++) {
 			int[] res = executeQuery(loaded, scan);
@@ -135,6 +135,7 @@ public class Main {
 			}
 		}
 		jTables.remove(maxT);
+		System.err.print(maxT.name);
 		return constJoinIterable(jTables, joinConds,(IterableWithTable) new Tloader(maxT));
 	}
 
@@ -167,6 +168,7 @@ public class Main {
 			if(!joinP) notJoinable.add(rT); 
 		}
 		jTables.addAll(notJoinable);//might be inefficient
+		System.err.print("X"+rT.name);
 		String cond1 = joinConds.get(jName+rT.name);
 		String cond2 = joinConds.get(rT.name+jName);
 		IterableWithTable newIt= new JoinIterable(baseT, new Tloader(rT), cond1, cond2);

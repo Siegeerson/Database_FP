@@ -35,11 +35,11 @@ public class Table implements Comparable<Table>{
 	@Override
 	public int compareTo(Table o) {
 		if (o.rowNum>rowNum) {
-			return -1;
+			return 1;
 		}else if (o.rowNum==rowNum) {
 			return 0;
 		}else {
-			return 1;
+			return -1;
 		}
 	}
 }
