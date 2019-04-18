@@ -38,6 +38,7 @@ public class JoinIterable implements IterableWithTable {
 			newT.colNames.put(k, i);
 			i++;
 		}
+		System.out.println(newT.colNames.keySet());
 		return newT;
 	}
 

@@ -241,7 +241,7 @@ public class Main {
 		long start = System.nanoTime();
 		int[] res = result.doSum();// do summation
 		System.err.println(System.nanoTime() - start);
-		System.err.println(TableIterator.read);
+		System.out.println(Arrays.toString(res));
 		return res;
 	}
 

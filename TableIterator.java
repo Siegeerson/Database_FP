@@ -14,7 +14,6 @@ public class TableIterator implements Iterator<int[][]> {
 	FileInputStream fis;
 	ByteBuffer bb;
 	FileChannel fc;
-	static int read = 0;
 	Table table;
 	int rowsRead;
 
@@ -34,7 +33,7 @@ public class TableIterator implements Iterator<int[][]> {
 	 */
 	@Override
 	public boolean hasNext() {
-//		System.err.println((table.rowNum-rowsRead)/(double)table.rowNum+"_"+table.names);
+		System.err.println((rowsRead)/(double)table.rowNum+"_"+table.names);
 		if (rowsRead != table.rowNum)
 			return true;
 		else {
@@ -58,11 +57,11 @@ public class TableIterator implements Iterator<int[][]> {
 				int[] row = new int[table.colNums];
 				for (int j = 0; j < row.length; j++) {
 					row[j] = bb.getInt();
-					read++;
 				}
 				rowsRead++;
 				result[i] = row;// add to block
 			}
+			System.out.println(rowsRead);
 			return result;
 		}
 		return null;// Should never reach this

@@ -1,4 +1,3 @@
-import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -59,22 +58,25 @@ public class JoinIterator implements Iterator<int[][]> {
 
 	@Override
 	public String toString() {
-		return leftItor.toString() + "^" + rightItor.toString();
+		return leftItor.toString() + "="+lCond+"^" + rightItor.toString()+"="+rCond;
 	}
 
 	public int[][] doJoin(int[][] result) {
 		int resIndex = 0;
 		while (resIndex < result.length) {
-			int[][] rightCur = rightItor.next();
 			if (!rightItor.hasNext()) {
-				if (leftItor.hasNext()) {
-					rightItor = rightIt.iterator();
+				rightItor = rightIt.iterator();
+				System.err.println("RESET:" + tr.name);
+				if (lCurr == currentLeft.length && leftItor.hasNext()) {
 					currentLeft = leftItor.next();
 					lCurr = 0;
-					System.err.println("RESET:"+tr.name);
+				} 
+				else {
+					return result;
 				}
-				else return result;
 			}
+			int[][] rightCur = rightItor.next();
+
 			for (int i = lCurr; i < currentLeft.length; i++) {
 				int[] left = currentLeft[i];
 //				if (resIndex >= result.length)
@@ -82,21 +84,32 @@ public class JoinIterator implements Iterator<int[][]> {
 				lCurr = i;
 				for (int j = rCurr; j < rightCur.length; j++) {
 //					if (resIndex >= result.length)
-//						return result;
+//						break;
 					rCurr = j;
 					int[] right = rightCur[j];
+					if(right==null) break;
 					if (left != null && right != null && left[lCond] == right[rCond]) {
-						int[] tempAr = Arrays.copyOf(left, left.length + right.length);// check if this is efficient
-						System.arraycopy(right, 0, tempAr, left.length, right.length);
+//						int[] tempAr = Arrays.copyOf(left, left.length + right.length);// check if this is efficient
+//						System.arraycopy(right, 0, tempAr, left.length, right.length);
 //						Thank you Joachim Sauer on stackoverflow
+						int[] tempAr = new int[tl.colNums+tr.colNums];
+						int k = 0;
+						for (int b: left) {
+							tempAr[k]=b;
+							k++;
+						}
+						for (int js : right) {
+							tempAr[k]=js;
+							k++;
+	}
 						result[resIndex] = tempAr;
 						resIndex++;
 					}
 				}
 			}
-			
+
 		}
-		
+
 		return result;
 
 	}
