@@ -12,7 +12,7 @@ public class PredicateIterable implements IterableWithTable {
 		iter = it;
 	}
 	@Override
-	public Iterator<ArrayList<int[]>> iterator() {
+	public Iterator<int[][]> iterator() {
 		return new PredicateIterator(iter, p);
 	}
 

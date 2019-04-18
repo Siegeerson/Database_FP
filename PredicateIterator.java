@@ -1,9 +1,10 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
-public class PredicateIterator implements Iterator<ArrayList<int[]>> {
+public class PredicateIterator implements Iterator<int[][]> {
 	Table t;
-	Iterator<ArrayList<int[]>> inputIt;
+	Iterator<int[][]> inputIt;
 	Pred p;
 	public PredicateIterator(IterableWithTable inputIter,Pred predicate) {
 		inputIt = inputIter.iterator();
@@ -17,12 +18,17 @@ public class PredicateIterator implements Iterator<ArrayList<int[]>> {
 	}
 
 	@Override
-	public ArrayList<int[]> next() {
-		ArrayList<int[]> result = new ArrayList<>();
-		ArrayList<int[]> input = inputIt.next();
-		for (int[] inputRow : input) {
-			if (p.eval(inputRow, t.colNames)) {
-				result.add(inputRow);
+	public int[][] next() {
+		int[][] result = new int[1024*4/t.colNums][];
+		int resIndex = 0;
+		while(inputIt.hasNext()&&resIndex<result.length) {
+			int[][] input = inputIt.next();
+			for (int[] inputRow : input) {
+				System.err.println(Arrays.toString(inputRow));
+				if (inputRow!=null&&p.eval(inputRow, t.colNames)) {
+					result[resIndex] = inputRow;
+					resIndex++;				
+				}
 			}
 		}
 		return result;

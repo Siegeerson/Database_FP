@@ -20,7 +20,7 @@ public class JoinIterable implements IterableWithTable {
 	}
 
 	@Override
-	public Iterator<ArrayList<int[]>> iterator() {
+	public Iterator<int[][]> iterator() {
 		return new JoinIterator(leftIter, rightIter, condl, condr, t1, t2);
 	}
 

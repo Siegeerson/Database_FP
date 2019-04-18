@@ -2,17 +2,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class JoinIterator implements Iterator<ArrayList<int[]>> {
+public class JoinIterator implements Iterator<int[][]> {
 
 	IterableWithTable leftIt;
 	IterableWithTable rightIt;
-	Iterator<ArrayList<int[]>> leftItor;
-	Iterator<ArrayList<int[]>> rightItor;
-	ArrayList<int[]> currentLeft;
+	Iterator<int[][]> leftItor;
+	Iterator<int[][]> rightItor;
+	int[][] currentLeft;
 	Table tl;
 	Table tr;
-	int lCond;
-	int rCond;
+	int lCurr;// index in left block
+	int rCurr;// index in left block
+	int lCond;// column to join on
+	int rCond;// column to join on
 	int colN;
 
 	public JoinIterator(IterableWithTable lI, IterableWithTable rI, String lCon, String rCon, Table t1, Table t2) {
@@ -25,12 +27,14 @@ public class JoinIterator implements Iterator<ArrayList<int[]>> {
 		colN = t1.colNums + t2.colNums;
 		tl = t1;
 		tr = t2;
+		lCurr = 0;
+		rCurr = 0;
 	}
 
 	@Override
 	public boolean hasNext() {
-		if(leftItor.hasNext()==false) {
-			System.err.println(toString()+"__FINISHED");
+		if (leftItor.hasNext() == false) {
+			System.err.println(toString() + "__FINISHED");
 		}
 		return leftItor.hasNext();
 	}
@@ -39,54 +43,66 @@ public class JoinIterator implements Iterator<ArrayList<int[]>> {
 	 * Preforms BLN join for one block from the right branch for each next call
 	 */
 	@Override
-	public ArrayList<int[]> next() {
-		ArrayList<int[]> result = new ArrayList<>();
+	public int[][] next() {
+		int[][] result = new int[1024 * 4 / colN][];
 //		System.out.println(tl.toString() + "__" + tr.toString());
 
 		if (currentLeft == null) {
 			currentLeft = leftItor.next();
+			lCurr = 0;
 		}
-//		TODO:always call has next before next
-		if (!rightItor.hasNext()) {
-			rightItor = rightIt.iterator();
-			currentLeft = leftItor.next();
-		}
-		
+
 		return doJoin(result);
 
 	}
+
 	@Override
 	public String toString() {
-		return leftItor.toString()+"^"+rightItor.toString();
+		return leftItor.toString() + "^" + rightItor.toString();
 	}
-	public ArrayList<int[]> doJoin(ArrayList<int[]> result){
-		ArrayList<int[]> rightRow = rightItor.next();
-//		System.out.println(rightRow.size());
-		Iterator<int[]> leftIt = currentLeft.iterator();
-		while(leftIt.hasNext()) {
-			int[] left = leftIt.next();
-			Iterator<int[]> rightIt = rightRow.iterator();
-			while(rightIt.hasNext()) {
-				int[] right = rightIt.next();
-				if (left[lCond] == right[rCond]) {
-					int[] tempAr = Arrays.copyOf(left, left.length + right.length);// check if this is efficient
-					System.arraycopy(right, 0, tempAr, left.length, right.length);
-//					// Thank you Joachim Sauer on stackoverflow
-					result.add(tempAr);
-//					int[] tempAr = new int[tl.colNums+tr.colNums];
-//					int i = 0;
-//					for (int j : left) {
-//						tempAr[i]=j;
-//						i++;
-//					}
-//					for (int js : right) {
-//						tempAr[i]=js;
-//						i++;
-//					}
-//					result.add(tempAr);
+
+	public int[][] doJoin(int[][] result) {
+		int resIndex = 0;
+		while (resIndex < result.length) {
+			int[][] rightCur = rightItor.next();
+			if (!rightItor.hasNext()) {
+//				if (leftItor.hasNext()) {
+					rightItor = rightIt.iterator();
+					currentLeft = leftItor.next();
+					lCurr = 0;
+					System.err.println("RESET:"+tr.name);
+//				}
+//				else return result;
+			}
+			if(currentLeft == null) break;
+			for (int i = lCurr; i < currentLeft.length; i++) {
+				int[] left = currentLeft[i];
+				if (resIndex >= result.length)
+					continue;
+				lCurr = i;
+				for (int j = rCurr; j < rightCur.length; j++) {
+					if (resIndex >= result.length)
+						continue;
+					rCurr = j;
+					int[] right = rightCur[j];
+					if(right!=null) System.err.println(Arrays.toString(right)+"_"+tr.name);
+					else System.err.print("NULL");
+					if (left != null && right != null && left[lCond] == right[rCond]) {
+						int[] tempAr = Arrays.copyOf(left, left.length + right.length);// check if this is efficient
+						System.arraycopy(right, 0, tempAr, left.length, right.length);
+//						Thank you Joachim Sauer on stackoverflow
+						result[resIndex] = tempAr;
+						resIndex++;
+					}
 				}
 			}
+			if(!leftItor.hasNext()) {
+				return result;
+			}
 		}
+		
 		return result;
+
 	}
+
 }

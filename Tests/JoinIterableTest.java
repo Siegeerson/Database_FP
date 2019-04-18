@@ -38,11 +38,8 @@ class JoinIterableTest {
 		IterableWithTable r = new Tloader(rT);
 		IterableWithTable join = new JoinIterable(l, r, predL, predR);
 		ArrayList<int[]> result = new ArrayList<>();
-		Iterator<ArrayList<int[]>> joinIter = join.iterator();
-		while (joinIter.hasNext()) {
-//			System.out.println("JOINS");
-			result.addAll(joinIter.next());
-		}
+		Iterator<int[][]> joinIter = join.iterator();
+		
 		System.out.println(result.size()+"_"+result.get(0).length);
 		
 	}
