@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class Sum {
@@ -7,9 +8,10 @@ public class Sum {
 	Iterator<int[][]> inputIter;
 
 	public Sum(IterableWithTable inputI, String[] sums) {
+		toSum = sums;
+		System.err.println("NEW SUM:"+inputI.toString()+" OVER:"+toString());
 		inputIter = inputI.iterator();
 		t = inputI.getTable();
-		toSum = sums;
 	}
 
 	public int[] doSum() {
@@ -25,6 +27,10 @@ public class Sum {
 			}
 		}
 		return result;
+	}
+	@Override
+	public String toString() {
+		return Arrays.toString(toSum);
 	}
 
 }

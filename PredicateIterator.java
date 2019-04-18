@@ -6,11 +6,14 @@ public class PredicateIterator implements Iterator<int[][]> {
 	Table t;
 	Iterator<int[][]> inputIt;
 	Pred p;
-
+	int[][] currIN;
+	int curDex;
 	public PredicateIterator(IterableWithTable inputIter, Pred predicate) {
 		inputIt = inputIter.iterator();
 		t = inputIter.getTable();
 		p = predicate;
+		curDex =0;
+		currIN = inputIt.next();
 	}
 
 	@Override
@@ -23,14 +26,22 @@ public class PredicateIterator implements Iterator<int[][]> {
 	public int[][] next() {
 		int[][] result = new int[1024 * 4 / t.colNums][];
 		int resIndex = 0;
-		while (inputIt.hasNext() && resIndex < result.length) {
-			int[][] input = inputIt.next();
-			for (int[] inputRow : input) {
-				if (inputRow != null && p.eval(inputRow, t.colNames)) {
-					result[resIndex] = inputRow;
+		while (resIndex < result.length) {
+			if(curDex==currIN.length&&inputIt.hasNext()) {
+				currIN=inputIt.next();
+				curDex=0;
+			}else if (curDex==currIN.length) {
+				return result;
+			} 
+			while (curDex<currIN.length&&resIndex<result.length) {
+				int[] inRow = currIN[curDex];
+				if(inRow!=null&&p.eval(inRow,t.colNames)) {
+					result[resIndex] = inRow;
 					resIndex++;
 				}
+				curDex++;
 			}
+			
 		}
 		return result;
 	}

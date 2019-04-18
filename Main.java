@@ -19,8 +19,8 @@ public class Main {
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
 		long startT = System.currentTimeMillis();
-		Map<String, Table> loaded = loadTables(scan.nextLine());
-		int nums = Integer.parseInt(scan.nextLine());
+		Map<String, Table> loaded = loadTables("data/s/A.csv,data/s/B.csv,data/s/C.csv,data/s/D.csv,data/s/E.csv,data/s/F.csv");//scan.nextLine());
+		int nums = 1;//Integer.parseInt(scan.nextLine());
 		for (int i = 0; i < nums; i++) {
 			int[] res = executeQuery(loaded, scan);
 			for (int j = 0; j < res.length; j++) {
@@ -57,40 +57,7 @@ public class Main {
 		return output;
 	}
 
-//	public static void putTablesJoins(Map<String, Table> loadedT, ArrayDeque<Table> tables, ArrayDeque<String> pred,
-//			String input) {
-//		String nString = input.substring(6);
-//		String[] joins = nString.split(" AND ");
-//		String colN1;
-//		String colN2;
-//		int maxSize =0;
-//		Set<String> pushedT = new HashSet<>();
-//		for (String joinOp : joins) {
-//			String[] ops = joinOp.split(" = ");
-//			colN1 = ops[0].substring(0, 1);
-//			boolean unordered = false;
-//			if (pushedT.add(colN1)) {
-//				tables.add(loadedT.get(colN1));
-//			}
-//			colN2 = ops[1].substring(0, 1);
-//			if (pushedT.add(colN2)) {
-//				tables.add(loadedT.get(colN2));
-//			} else {
-//				unordered = true;// weird ordering edge case
-//			}
-//			if (unordered) {
-//				pred.add(colN2 + ops[1].trim().substring(3));
-//				pred.add(colN1 + ops[0].trim().substring(3));
-//			} else {
-//				pred.add(colN1 + ops[0].trim().substring(3));
-//				pred.add(colN2 + ops[1].trim().substring(3));
-//			}
-//
-//		}
-//
-////		System.out.println(pred.size() + "_" + tables.size());
-//
-//	}
+
 	/**
 	 * @param joinable
 	 * @param joinConds
@@ -231,6 +198,7 @@ public class Main {
 		PriorityQueue<Table> pqT = fillQ(lTables,scan.nextLine());
 //		canJoin = fillCanJoin(canJoin, lTables);
 		Map<String, String> joinConds = new HashMap<String, String>();
+		
 		processJoins(joinConds, lTables, scan.nextLine());
 		IterableWithTable topJoin = constructJoinTable(pqT, joinConds);
 		Pred predicateTree = doPredicates(scan.nextLine());

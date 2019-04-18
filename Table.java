@@ -10,6 +10,7 @@ public class Table implements Comparable<Table>{
 	String fName;
 	int colNums;
 	int rowNum;
+//	to find unique do max - min
 //	int[] colMax;
 //	int[] colMin;
 //	int[] colUni;

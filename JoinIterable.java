@@ -21,6 +21,7 @@ public class JoinIterable implements IterableWithTable {
 
 	@Override
 	public Iterator<int[][]> iterator() {
+		System.err.println("NEW ITERATOR:"+toString());
 		return new JoinIterator(leftIter, rightIter, condl, condr, t1, t2);
 	}
 
@@ -38,7 +39,7 @@ public class JoinIterable implements IterableWithTable {
 			newT.colNames.put(k, i);
 			i++;
 		}
-		System.out.println(newT.colNames.keySet());
+		System.err.println(newT.colNames.keySet());
 		return newT;
 	}
 

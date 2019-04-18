@@ -33,11 +33,11 @@ public class TableIterator implements Iterator<int[][]> {
 	 */
 	@Override
 	public boolean hasNext() {
-		System.err.println((rowsRead)/(double)table.rowNum+"_"+table.names);
+//		System.err.println((rowsRead)/(double)table.rowNum+"_"+table.names);
 		if (rowsRead != table.rowNum)
 			return true;
 		else {
-			System.err.println("END OF TABLE:"+table.name);
+			System.err.println("END OF TABLE:"+table.name+"_"+rowsRead);
 			return false;
 		}
 	}
@@ -49,7 +49,7 @@ public class TableIterator implements Iterator<int[][]> {
 	public int[][] next() {
 //		System.err.println("READING TABLE:"+table.name);
 		if (bb.hasRemaining()) {
-			int[][] result = new int[1024 * 4][];// size is equal to 1024 *4 /column numbers
+			int[][] result = new int[1024 * 4/table.colNums][];// size is equal to 1024 *4 /column numbers
 //			System.out.println(bb.remaining()+"_"+(4*table.colNums));
 			for (int i = 0; i < result.length; i++) {
 				if (rowsRead == table.rowNum)
@@ -61,7 +61,7 @@ public class TableIterator implements Iterator<int[][]> {
 				rowsRead++;
 				result[i] = row;// add to block
 			}
-			System.out.println(rowsRead);
+//			System.out.println(rowsRead);
 			return result;
 		}
 		return null;// Should never reach this

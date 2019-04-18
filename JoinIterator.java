@@ -9,6 +9,9 @@ public class JoinIterator implements Iterator<int[][]> {
 	Iterator<int[][]> leftItor;
 	Iterator<int[][]> rightItor;
 	int[][] currentLeft;
+	int[][] currentRight;
+	boolean allNUll;
+	int rowsIt;
 	Table tl;
 	Table tr;
 	int lCurr;// index in left block
@@ -20,6 +23,8 @@ public class JoinIterator implements Iterator<int[][]> {
 	public JoinIterator(IterableWithTable lI, IterableWithTable rI, String lCon, String rCon, Table t1, Table t2) {
 		leftIt = lI;
 		rightIt = rI;
+		allNUll = true;
+		rowsIt = 0;
 		lCond = t1.colNames.get(lCon);
 		rCond = t2.colNames.get(rCon);
 		leftItor = leftIt.iterator();
@@ -33,10 +38,11 @@ public class JoinIterator implements Iterator<int[][]> {
 
 	@Override
 	public boolean hasNext() {
-		if (leftItor.hasNext() == false) {
-			System.err.println(toString() + "__FINISHED");
+		boolean hasNext = leftItor.hasNext();
+		if (hasNext == false) {
+			System.err.println(toString() + "__FINISHED__" + allNUll + "_" + rowsIt);
 		}
-		return leftItor.hasNext();
+		return hasNext;
 	}
 
 	/**
@@ -44,12 +50,16 @@ public class JoinIterator implements Iterator<int[][]> {
 	 */
 	@Override
 	public int[][] next() {
-		int[][] result = new int[1024 * 4 / colN][];
+		int[][] result = new int[1024 / colN][];
 //		System.out.println(tl.toString() + "__" + tr.toString());
 
 		if (currentLeft == null) {
 			currentLeft = leftItor.next();
 			lCurr = 0;
+		}
+		if (currentRight == null) {
+			currentRight = rightItor.next();
+			rCurr = 0;
 		}
 
 		return doJoin(result);
@@ -58,54 +68,65 @@ public class JoinIterator implements Iterator<int[][]> {
 
 	@Override
 	public String toString() {
-		return leftItor.toString() + "="+lCond+"^" + rightItor.toString()+"="+rCond;
+		return leftItor.toString() + "=" + lCond + "^" + rightItor.toString() + "=" + rCond;
 	}
 
 	public int[][] doJoin(int[][] result) {
 		int resIndex = 0;
 		while (resIndex < result.length) {
-			if (!rightItor.hasNext()) {
-				rightItor = rightIt.iterator();
-				System.err.println("RESET:" + tr.name);
-				if (lCurr == currentLeft.length && leftItor.hasNext()) {
-					currentLeft = leftItor.next();
-					lCurr = 0;
-				} 
-				else {
-					return result;
+			if (lCurr == currentLeft.length) {
+				if (!rightItor.hasNext()) {
+					if (leftItor.hasNext()) {
+						System.err.println("RESET: " + rightItor.toString());
+						rightItor = rightIt.iterator();
+						currentLeft = leftItor.next();
+						lCurr = 0;
+					} else
+						return result;
 				}
+				currentRight = rightItor.next();
+				rCurr = 0;
 			}
-			int[][] rightCur = rightItor.next();
 
-			for (int i = lCurr; i < currentLeft.length; i++) {
-				int[] left = currentLeft[i];
-//				if (resIndex >= result.length)
-//					return result;
-				lCurr = i;
-				for (int j = rCurr; j < rightCur.length; j++) {
-//					if (resIndex >= result.length)
-//						break;
-					rCurr = j;
-					int[] right = rightCur[j];
-					if(right==null) break;
-					if (left != null && right != null && left[lCond] == right[rCond]) {
+			if (lCurr == currentLeft.length&&currentRight.length-1==rCurr) {
+				lCurr = 0;
+			}
+			while (lCurr < currentLeft.length && resIndex < result.length) {
+				if (rCurr == currentRight.length) {
+					rCurr = 0;
+				}
+				int[] left = currentLeft[lCurr];
+				while (rCurr < currentRight.length && resIndex < result.length) {
+
+					if (resIndex >= result.length)
+						return result;
+					int[] right = currentRight[rCurr];
+//					if(right==null) break;
+					if (left != null && right != null) {
+						if (left[lCond] == right[rCond]) {
+							rowsIt++;
+							allNUll = false;
 //						int[] tempAr = Arrays.copyOf(left, left.length + right.length);// check if this is efficient
 //						System.arraycopy(right, 0, tempAr, left.length, right.length);
 //						Thank you Joachim Sauer on stackoverflow
-						int[] tempAr = new int[tl.colNums+tr.colNums];
-						int k = 0;
-						for (int b: left) {
-							tempAr[k]=b;
-							k++;
+							int[] tempAr = new int[tl.colNums + tr.colNums];
+							int k = 0;
+							for (int b : left) {
+								tempAr[k] = b;
+								k++;
+							}
+							for (int js : right) {
+								tempAr[k] = js;
+								k++;
+							}
+							result[resIndex] = tempAr;
+							resIndex++;
 						}
-						for (int js : right) {
-							tempAr[k]=js;
-							k++;
-	}
-						result[resIndex] = tempAr;
-						resIndex++;
 					}
+					rCurr++;
 				}
+				if(rCurr==currentRight.length) System.out.println("STOP");
+				lCurr++;
 			}
 
 		}
