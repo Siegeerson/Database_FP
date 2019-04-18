@@ -14,6 +14,7 @@ public class TableIterator implements Iterator<int[][]> {
 	FileInputStream fis;
 	ByteBuffer bb;
 	FileChannel fc;
+	static int read = 0;
 	Table table;
 	int rowsRead;
 
@@ -53,15 +54,14 @@ public class TableIterator implements Iterator<int[][]> {
 //			System.out.println(bb.remaining()+"_"+(4*table.colNums));
 			for (int i = 0; i < result.length; i++) {
 				if (rowsRead == table.rowNum)
-					continue;
+					break;
 				int[] row = new int[table.colNums];
 				for (int j = 0; j < row.length; j++) {
 					row[j] = bb.getInt();
+					read++;
 				}
 				rowsRead++;
 				result[i] = row;// add to block
-//				if (!hasNext())
-//					continue;// if no more rows to read go on
 			}
 			return result;
 		}

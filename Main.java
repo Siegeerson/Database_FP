@@ -18,6 +18,7 @@ import sun.misc.Queue;
 public class Main {
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
+		long startT = System.currentTimeMillis();
 		Map<String, Table> loaded = loadTables(scan.nextLine());
 		int nums = Integer.parseInt(scan.nextLine());
 		for (int i = 0; i < nums; i++) {
@@ -30,6 +31,7 @@ public class Main {
 				scan.nextLine();
 		}
 		scan.close();
+		System.out.println(System.currentTimeMillis()-startT);
 
 	}
 
@@ -238,7 +240,8 @@ public class Main {
 		System.err.println("START");
 		long start = System.nanoTime();
 		int[] res = result.doSum();// do summation
-		System.out.println(System.nanoTime() - start);
+		System.err.println(System.nanoTime() - start);
+		System.err.println(TableIterator.read);
 		return res;
 	}
 

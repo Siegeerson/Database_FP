@@ -1,3 +1,4 @@
+import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -66,27 +67,24 @@ public class JoinIterator implements Iterator<int[][]> {
 		while (resIndex < result.length) {
 			int[][] rightCur = rightItor.next();
 			if (!rightItor.hasNext()) {
-//				if (leftItor.hasNext()) {
+				if (leftItor.hasNext()) {
 					rightItor = rightIt.iterator();
 					currentLeft = leftItor.next();
 					lCurr = 0;
 					System.err.println("RESET:"+tr.name);
-//				}
-//				else return result;
+				}
+				else return result;
 			}
-			if(currentLeft == null) break;
 			for (int i = lCurr; i < currentLeft.length; i++) {
 				int[] left = currentLeft[i];
-				if (resIndex >= result.length)
-					continue;
+//				if (resIndex >= result.length)
+//					return result;
 				lCurr = i;
 				for (int j = rCurr; j < rightCur.length; j++) {
-					if (resIndex >= result.length)
-						continue;
+//					if (resIndex >= result.length)
+//						return result;
 					rCurr = j;
 					int[] right = rightCur[j];
-					if(right!=null) System.err.println(Arrays.toString(right)+"_"+tr.name);
-					else System.err.print("NULL");
 					if (left != null && right != null && left[lCond] == right[rCond]) {
 						int[] tempAr = Arrays.copyOf(left, left.length + right.length);// check if this is efficient
 						System.arraycopy(right, 0, tempAr, left.length, right.length);
@@ -96,9 +94,7 @@ public class JoinIterator implements Iterator<int[][]> {
 					}
 				}
 			}
-			if(!leftItor.hasNext()) {
-				return result;
-			}
+			
 		}
 		
 		return result;
