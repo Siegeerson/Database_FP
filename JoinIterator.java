@@ -32,17 +32,20 @@ public class JoinIterator implements Iterator<int[][]> {
 		colN = t1.colNums + t2.colNums;
 		tl = t1;
 		tr = t2;
+		currentLeft = leftItor.next();
 		lCurr = 0;
+		currentRight = rightItor.next();
 		rCurr = 0;
 	}
 
 	@Override
 	public boolean hasNext() {
 		boolean hasNext = leftItor.hasNext();
-		if (hasNext == false) {
+		if (hasNext == false&&currentLeft.length==lCurr&&currentRight.length==rCurr) {
 			System.err.println(toString() + "__FINISHED__" + allNUll + "_" + rowsIt);
+			return false;
 		}
-		return hasNext;
+		return  true;
 	}
 
 	/**
@@ -52,15 +55,6 @@ public class JoinIterator implements Iterator<int[][]> {
 	public int[][] next() {
 		int[][] result = new int[1024 / colN][];
 //		System.out.println(tl.toString() + "__" + tr.toString());
-
-		if (currentLeft == null) {
-			currentLeft = leftItor.next();
-			lCurr = 0;
-		}
-		if (currentRight == null) {
-			currentRight = rightItor.next();
-			rCurr = 0;
-		}
 
 		return doJoin(result);
 
@@ -82,14 +76,13 @@ public class JoinIterator implements Iterator<int[][]> {
 						currentLeft = leftItor.next();
 						lCurr = 0;
 					} else {
-						System.out.println((currentLeft.length-lCurr)+"_"+(currentRight.length-rCurr));
+						System.err.println((currentLeft.length - lCurr) + "_" + (currentRight.length - rCurr));
 						return result;
 					}
 				}
 				currentRight = rightItor.next();
 				rCurr = 0;
 			}
-
 			if (lCurr == currentLeft.length) {
 				lCurr = 0;
 			}
@@ -99,7 +92,6 @@ public class JoinIterator implements Iterator<int[][]> {
 				}
 				int[] left = currentLeft[lCurr];
 				while (rCurr < currentRight.length && resIndex < result.length) {
-
 					if (resIndex >= result.length)
 						return result;
 					int[] right = currentRight[rCurr];
@@ -121,6 +113,7 @@ public class JoinIterator implements Iterator<int[][]> {
 								tempAr[k] = js;
 								k++;
 							}
+//							System.err.println(Arrays.toString(tempAr));
 							result[resIndex] = tempAr;
 							resIndex++;
 						}

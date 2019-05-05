@@ -13,7 +13,7 @@ public class PredicateIterable implements IterableWithTable {
 	}
 	@Override
 	public Iterator<int[][]> iterator() {
-		System.err.println("NEW PRED IT:"+toString());
+//		System.err.println("NEW PRED IT:"+toString());
 		return new PredicateIterator(iter, p);
 	}
 

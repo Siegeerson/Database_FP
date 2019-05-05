@@ -18,7 +18,7 @@ class TloaderTest {
 		while (iter.hasNext()) {
 			iter.next();
 		}
-		System.out.println(System.currentTimeMillis()-start);
+		System.err.println(System.currentTimeMillis()-start);
 	}
 
 }

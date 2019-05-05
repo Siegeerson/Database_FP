@@ -49,7 +49,7 @@ public class TableIterator implements Iterator<int[][]> {
 	public int[][] next() {
 //		System.err.println("READING TABLE:"+table.name);
 		if (bb.hasRemaining()) {
-			int[][] result = new int[1024 * 40/table.colNums][];// size is equal to 1024 *4 /column numbers
+			int[][] result = new int[1024 * 80/table.colNums][];// size is equal to 1024 *4 /column numbers
 //			System.out.println(bb.remaining()+"_"+(4*table.colNums));
 			for (int i = 0; i < result.length; i++) {
 				if (rowsRead == table.rowNum)

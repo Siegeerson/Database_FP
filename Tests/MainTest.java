@@ -25,7 +25,7 @@ class MainTest {
 				"FROM A, D, E, F\r\n" + 
 				"WHERE D.c1 = F.c0 AND F.c1 = E.c1 AND A.c3 = D.c0\r\n" + 
 				"AND E.c0 < -3 AND F.c3 < 0;";
-		String load = "data/xs/C.csv,data/xs/D.csv,data/xs/E.csv,data/xs/A.csv,data/xs/F.csv";
+		String load = "../DBMS_Project/data/xs/C.csv,data/xs/D.csv,data/xs/E.csv,data/xs/A.csv,data/xs/F.csv";
 		int[] result = Main.executeQuery(load,q);
 		System.out.println(Arrays.toString(result));
 	}
