@@ -1,1 +1,5 @@
 OldFiles
+*.py
+*.sh
+*.class
+*proc*

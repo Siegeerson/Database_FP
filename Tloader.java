@@ -17,7 +17,7 @@ public class Tloader implements IterableWithTable {
 	 * iterator for buffered rows
 	 */
 	@Override
-	public Iterator<ArrayList<int[]>> iterator() {
+	public Iterator<int[][]> iterator() {
 		if (it != null) {
 			try {
 //				System.out.println("NEW READ__"+t.toString());

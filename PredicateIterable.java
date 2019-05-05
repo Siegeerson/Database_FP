@@ -12,7 +12,8 @@ public class PredicateIterable implements IterableWithTable {
 		iter = it;
 	}
 	@Override
-	public Iterator<ArrayList<int[]>> iterator() {
+	public Iterator<int[][]> iterator() {
+//		System.err.println("NEW PRED IT:"+toString());
 		return new PredicateIterator(iter, p);
 	}
 
@@ -21,5 +22,8 @@ public class PredicateIterable implements IterableWithTable {
 
 		return iter.getTable();
 	}
-
+	@Override
+	public String toString() {
+		return iter.toString()+"^"+p.toString();
+	}
 }
