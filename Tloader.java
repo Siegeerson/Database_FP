@@ -17,16 +17,17 @@ public class Tloader implements IterableWithTable {
 	 * iterator for buffered rows
 	 */
 	@Override
-	public Iterator<ArrayList<int[]>> iterator() {
-		if (it!=null) {
+	public Iterator<int[][]> iterator() {
+		if (it != null) {
 			try {
+//				System.out.println("NEW READ__"+t.toString());
 				it.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		try {
-			it = new TableIterator(t);//Lots of exceptions here
+			it = new TableIterator(t);// Lots of exceptions here
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -39,5 +40,6 @@ public class Tloader implements IterableWithTable {
 	public Table getTable() {
 		return t;
 	}
+
 
 }

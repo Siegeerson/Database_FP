@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 
-public interface IterableWithTable extends Iterable<ArrayList<int[]>> {
+/**
+ * @author Benjamin Siege
+ *	This class is important as there are numerous methods that might need to know data about the table below them
+ */
+public interface IterableWithTable extends Iterable<int[][]> {
 
 	public Table getTable();
 }

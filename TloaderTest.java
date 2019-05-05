@@ -2,23 +2,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import org.junit.jupiter.api.Test;
 
 class TloaderTest {
-	
+
 	@Test
-	void testIterator() throws IOException {
+	void test() throws IOException {
 		Loader l = new Loader();
-		Table t = l.LoadFile("data/xs/a.csv");
-		Tloader tlTest = new Tloader(t);
-		Iterator<ArrayList<int[]>> rowIter = tlTest.iterator();
-		ArrayList<int[]> intA = rowIter.next();
-		ArrayList<int[]> intA2 = tlTest.iterator().next();
-		System.out.println(Arrays.toString(intA.get(0))+"\n"+Arrays.toString(intA2.get(0)));
-		
+		Table t = l.LoadFile("data/M/A.csv");
+		IterableWithTable it = new Tloader(t);
+		long start = System.currentTimeMillis();
+		Iterator<int[][]> iter = it.iterator();
+		while (iter.hasNext()) {
+			iter.next();
+		}
+		System.err.println(System.currentTimeMillis()-start);
 	}
 
 }

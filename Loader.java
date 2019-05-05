@@ -24,7 +24,7 @@ public class Loader {
 		return result;
 	}
 
-//	TODO:Change to external sort on each different column
+//	TODO:Change to external sort on each different column (?)
 //	TODO:Gather more metaData
 	public Table LoadFile(String path) throws IOException {
 		File input = new File(path);
@@ -44,7 +44,7 @@ public class Loader {
 				char selChar = cb1.charAt(i);
 				if (selChar == ',' || selChar == '\n') {
 //					Integer tempI= Integer.parseInt(cb1.subSequence(numS, i).toString(),10);
-					dos.writeInt((Integer.parseInt(cb1.subSequence(numS, i).toString(), 10))); // TODO:Best Way?
+					dos.writeInt((Integer.parseInt(cb1.subSequence(numS, i).toString(), 10)));
 					numS = i + 1;
 //					Find number of columns
 					colTrack++;
@@ -69,6 +69,7 @@ public class Loader {
 		fr.close();
 		Table output = new Table(tableName, colNum,rowNum);
 		output.fName = tableName;
+		output.names.add(tableName.substring(0,1));
 		for (int i = 0; i < output.colNums; i++) {
 			output.colNames.put(output.name+i, i);
 		}
@@ -85,10 +86,10 @@ public class Loader {
 		while (fc.read(bb) != -1) {
 			bb.flip();
 			while (bb.remaining()>3) {
-				System.out.printf("%-10d",bb.get());
+				System.err.printf("%-10d",bb.get());
 				i++;
 				if (i % table.colNums == 0) {
-					System.out.println();
+					System.err.println();
 				}
 			}
 			bb2.clear();
@@ -96,14 +97,15 @@ public class Loader {
 			ByteBuffer tempB = bb;
 			bb = bb2;
 			bb2 = tempB;
-			System.out.println(i/table.colNums);
+			System.err.println(i/table.colNums);
 		}
 		fc.close();
 		fis.close();
 	}
 	public String getName(String f) {
 		String[] fullP = f.split("/");
-		String name = fullP[2].charAt(0)+fullP[1];
+		
+		String name = fullP[fullP.length-1].charAt(0)+fullP[1];
 		return name;
 		
 	}
