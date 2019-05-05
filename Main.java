@@ -20,7 +20,7 @@ public class Main {
 		Scanner scan = new Scanner(System.in);
 		String toLoad = scan.nextLine();		
 		Map<String, Table> loaded = loadTables(toLoad);
-		System.err.println(loaded.keySet().toString());
+//		System.err.println(loaded.keySet().toString());
 		long startT = System.currentTimeMillis();
 		int nums =  Integer.parseInt(scan.nextLine());
 		for (int i = 0; i < nums; i++) {
@@ -202,6 +202,7 @@ public class Main {
 		String[] tables = tStr.split(",");
 		System.err.println(Arrays.toString(tables));
 		for (String string : tables) {
+			System.err.println(string);
 			pq.add(loaded.get(string.trim()));
 		}
 		return pq;
